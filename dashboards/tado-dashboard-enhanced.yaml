@@ -413,8 +413,8 @@ views:
           If auto-discovery doesn't work perfectly, you can manually enter your Tado entity names above. 
           
           **Common Tado Entity Patterns:**
-          - `climate.*sensor_*` (Temperature sensors)
-          - `climate.*radiator_*` (Radiator thermostats)
+          - `*sensor_*` (Temperature sensors)
+          - `*radiator_*` (Radiator thermostats)
           - Look for entities containing "*sensor_*" or "*radiator_*" in the entity list below.
 
       - type: auto-entities

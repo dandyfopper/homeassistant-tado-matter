@@ -205,8 +205,8 @@ Modify the temperature settings in the Configuration dashboard:
 
 ### 📡 **Entity Patterns Detected**
 The system automatically detects these common patterns:
-- `climate.*sensor_*` (Temperature sensors)
-- `climate.*radiator_*` (Radiator thermostats)
+- `*sensor_*` (Temperature sensors)
+- `*radiator_*` (Radiator thermostats)
 - `sensor.*sensor_*` (Temperature/humidity sensors)
 - `sensor.*radiator_*` (Radiator-related sensors)
 - Custom patterns can be manually configured
@@ -326,7 +326,7 @@ rm -rf packages/tado*.yaml dashboards/tado*.yaml
 #### Common Entity Patterns
 If automatic discovery fails, check for these common Tado entity patterns:
 - `climate.tado_smart_thermostat_*`
-- `climate.*_tado`
+- `*_tado`
 - `sensor.tado_*_temperature`
 - `sensor.*_tado_*`
 

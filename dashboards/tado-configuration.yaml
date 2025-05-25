@@ -155,8 +155,8 @@ views:
           **Manual Setup:**
           
           If auto-discovery doesn't work, you can manually set the entity names above. Look for entities like:
-          - `climate.*sensor_*` (Temperature sensors)
-          - `climate.*radiator_*` (Radiator thermostats)
+          - `*sensor_*` (Temperature sensors)
+          - `*radiator_*` (Radiator thermostats)
           - Any climate entity containing "*sensor_*" or "*radiator_*"
 
   - title: Advanced Settings
