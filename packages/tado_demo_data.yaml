@@ -1,0 +1,339 @@
+# Demo data sensors for Tado Infographic Dashboard
+# Creates realistic sensor data for demonstration purposes
+
+homeassistant:
+  customize:
+    sensor.tado_energy_savings_today:
+      friendly_name: "Energy Savings Today"
+      icon: mdi:leaf
+      unit_of_measurement: "kWh"
+    sensor.tado_average_temperature:
+      friendly_name: "Average Temperature"
+      icon: mdi:thermometer
+      unit_of_measurement: "°C"
+    sensor.tado_active_devices:
+      friendly_name: "Active Devices"
+      icon: mdi:radiator
+    sensor.tado_comfort_score:
+      friendly_name: "Comfort Score"
+      icon: mdi:emoticon-happy
+    sensor.tado_efficiency_score:
+      friendly_name: "Efficiency Score"
+      icon: mdi:leaf-circle
+      unit_of_measurement: "%"
+
+template:
+  - sensor:
+      # Energy savings calculation
+      - name: "Tado Energy Savings Today"
+        unique_id: tado_energy_savings_today
+        state: >
+          {% set total_power = 0 %}
+          {% set climates = [
+            'climate.living_room_thermostat',
+            'climate.kitchen_thermostat', 
+            'climate.bedroom_1_thermostat',
+            'climate.office_thermostat'
+          ] %}
+          {% for climate in climates %}
+            {% if states(climate) != 'unavailable' %}
+              {% set current_temp = state_attr(climate, 'current_temperature') | float(20) %}
+              {% set target_temp = state_attr(climate, 'temperature') | float(21) %}
+              {% set diff = (target_temp - current_temp) | abs %}
+              {% if diff < 0.5 %}
+                {% set total_power = total_power + 0.1 %}
+              {% elif states(climate) == 'heat' %}
+                {% set total_power = total_power + (diff * 0.5) %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% set baseline_power = 12.5 %}
+          {% set savings = baseline_power - total_power %}
+          {{ (savings | round(1)) if savings > 0 else 0 }}
+        unit_of_measurement: "kWh"
+        device_class: energy
+
+      # Average temperature across all rooms
+      - name: "Tado Average Temperature"
+        unique_id: tado_average_temperature
+        state: >
+          {% set temps = [] %}
+          {% set climates = [
+            'climate.living_room_thermostat',
+            'climate.kitchen_thermostat', 
+            'climate.bedroom_1_thermostat',
+            'climate.office_thermostat'
+          ] %}
+          {% for climate in climates %}
+            {% if states(climate) != 'unavailable' %}
+              {% set temp = state_attr(climate, 'current_temperature') %}
+              {% if temp is not none %}
+                {% set temps = temps + [temp | float] %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% if temps | length > 0 %}
+            {{ (temps | sum / temps | length) | round(1) }}
+          {% else %}
+            20.5
+          {% endif %}
+        unit_of_measurement: "°C"
+        device_class: temperature
+
+      # Count of actively heating devices
+      - name: "Tado Active Devices"
+        unique_id: tado_active_devices
+        state: >
+          {% set active = 0 %}
+          {% set climates = [
+            'climate.living_room_thermostat',
+            'climate.kitchen_thermostat', 
+            'climate.bedroom_1_thermostat',
+            'climate.office_thermostat'
+          ] %}
+          {% for climate in climates %}
+            {% if states(climate) == 'heat' %}
+              {% set active = active + 1 %}
+            {% endif %}
+          {% endfor %}
+          {{ active }}
+
+      # Comfort score based on temperature accuracy
+      - name: "Tado Comfort Score"
+        unique_id: tado_comfort_score
+        state: >
+          {% set scores = [] %}
+          {% set climates = [
+            'climate.living_room_thermostat',
+            'climate.kitchen_thermostat', 
+            'climate.bedroom_1_thermostat',
+            'climate.office_thermostat'
+          ] %}
+          {% for climate in climates %}
+            {% if states(climate) != 'unavailable' %}
+              {% set current_temp = state_attr(climate, 'current_temperature') | float(20) %}
+              {% set target_temp = state_attr(climate, 'temperature') | float(21) %}
+              {% set humidity = state_attr(climate, 'current_humidity') | float(50) %}
+              {% set diff = (target_temp - current_temp) | abs %}
+              
+              {% set room_score = 100 %}
+              {% if diff > 0.5 %}
+                {% set room_score = room_score - (diff * 20) %}
+              {% endif %}
+              {% if humidity < 30 or humidity > 70 %}
+                {% set room_score = room_score - 15 %}
+              {% endif %}
+              {% if states(climate) == 'off' and diff > 2 %}
+                {% set room_score = room_score - 30 %}
+              {% endif %}
+              
+              {% set scores = scores + [room_score | round] %}
+            {% endif %}
+          {% endfor %}
+          {% if scores | length > 0 %}
+            {{ (scores | sum / scores | length) | round }}
+          {% else %}
+            85
+          {% endif %}
+
+      # Energy efficiency score
+      - name: "Tado Efficiency Score"
+        unique_id: tado_efficiency_score
+        state: >
+          {% set energy_saved = states('sensor.tado_energy_savings_today') | float(0) %}
+          {% set comfort_score = states('sensor.tado_comfort_score') | float(85) %}
+          {% set active_devices = states('sensor.tado_active_devices') | int(0) %}
+          {% set total_devices = 4 %}
+          
+          # Base efficiency on energy savings
+          {% set energy_efficiency = (energy_saved * 10) | round %}
+          {% if energy_efficiency > 50 %}
+            {% set energy_efficiency = 50 %}
+          {% endif %}
+          
+          # Add comfort component
+          {% set comfort_component = (comfort_score * 0.3) | round %}
+          
+          # Subtract penalty for unnecessary heating
+          {% set usage_penalty = (active_devices * 5) %}
+          
+          {% set total_score = energy_efficiency + comfort_component - usage_penalty %}
+          {% if total_score > 100 %}
+            {% set total_score = 100 %}
+          {% elif total_score < 0 %}
+            {% set total_score = 0 %}
+          {% endif %}
+          
+          {{ total_score | round }}
+        unit_of_measurement: "%"
+
+      # Daily energy usage simulation
+      - name: "Tado Daily Energy Usage"
+        unique_id: tado_daily_energy_usage
+        state: >
+          {% set baseline = 25 %}
+          {% set efficiency = states('sensor.tado_efficiency_score') | float(75) %}
+          {% set usage_factor = (100 - efficiency) / 100 %}
+          {% set daily_usage = baseline * (1 + usage_factor) %}
+          {{ daily_usage | round(1) }}
+        unit_of_measurement: "kWh"
+        device_class: energy
+
+  # Binary sensors for system status
+  - binary_sensor:
+      - name: "Tado System Online"
+        unique_id: tado_system_online
+        state: >
+          {% set climates = [
+            'climate.living_room_thermostat',
+            'climate.kitchen_thermostat', 
+            'climate.bedroom_1_thermostat',
+            'climate.office_thermostat'
+          ] %}
+          {% set online_count = 0 %}
+          {% for climate in climates %}
+            {% if states(climate) != 'unavailable' %}
+              {% set online_count = online_count + 1 %}
+            {% endif %}
+          {% endfor %}
+          {{ online_count > 0 }}
+        device_class: connectivity
+
+# Utility meter for tracking daily/weekly/monthly energy
+utility_meter:
+  tado_energy_daily:
+    source: sensor.tado_daily_energy_usage
+    cycle: daily
+    name: "Tado Daily Energy"
+    
+  tado_energy_weekly:
+    source: sensor.tado_daily_energy_usage
+    cycle: weekly
+    name: "Tado Weekly Energy"
+    
+  tado_energy_monthly:
+    source: sensor.tado_daily_energy_usage
+    cycle: monthly
+    name: "Tado Monthly Energy"
+
+# Statistics sensors for historical data
+sensor:
+  - platform: statistics
+    name: "Tado Comfort Score Statistics"
+    entity_id: sensor.tado_comfort_score
+    state_characteristic: mean
+    max_age:
+      hours: 24
+      
+  - platform: statistics
+    name: "Tado Average Temperature Statistics"
+    entity_id: sensor.tado_average_temperature
+    state_characteristic: mean
+    max_age:
+      hours: 24
+
+# Input helpers for demo mode
+input_boolean:
+  tado_demo_mode:
+    name: "Tado Demo Mode"
+    icon: mdi:test-tube
+    initial: false
+
+input_number:
+  tado_demo_temperature_offset:
+    name: "Demo Temperature Offset"
+    min: -5
+    max: 5
+    step: 0.1
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer-plus
+
+# Automation to create realistic demo data variations
+automation:
+  - id: tado_demo_data_variation
+    alias: "Tado Demo Data Variation"
+    description: "Creates realistic variations in demo data"
+    trigger:
+      - platform: time_pattern
+        minutes: "/5"  # Every 5 minutes
+    condition:
+      - condition: state
+        entity_id: input_boolean.tado_demo_mode
+        state: 'on'
+    action:
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.tado_demo_temperature_offset
+        data:
+          value: >
+            {% set current_offset = states('input_number.tado_demo_temperature_offset') | float(0) %}
+            {% set random_change = (range(-0.5, 0.5) | random / 10) %}
+            {% set new_offset = current_offset + random_change %}
+            {% if new_offset > 5 %}
+              {% set new_offset = 5 %}
+            {% elif new_offset < -5 %}
+              {% set new_offset = -5 %}
+            {% endif %}
+            {{ new_offset | round(1) }}
+
+# Scripts for demo scenarios
+script:
+  tado_demo_heating_scenario:
+    alias: "Demo: Cold Morning"
+    sequence:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.tado_demo_mode
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.tado_demo_temperature_offset
+        data:
+          value: -2.5
+      - service: climate.set_temperature
+        target:
+          entity_id: 
+            - climate.living_room_thermostat
+            - climate.kitchen_thermostat
+            - climate.bedroom_1_thermostat
+        data:
+          temperature: 22
+
+  tado_demo_comfort_scenario:
+    alias: "Demo: Perfect Comfort"
+    sequence:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.tado_demo_mode
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.tado_demo_temperature_offset
+        data:
+          value: 0
+      - service: climate.set_temperature
+        target:
+          entity_id: 
+            - climate.living_room_thermostat
+            - climate.kitchen_thermostat
+            - climate.bedroom_1_thermostat
+        data:
+          temperature: 21
+
+  tado_demo_energy_saving_scenario:
+    alias: "Demo: Energy Saving"
+    sequence:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.tado_demo_mode
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.tado_demo_temperature_offset
+        data:
+          value: 1.5
+      - service: climate.set_temperature
+        target:
+          entity_id: 
+            - climate.living_room_thermostat
+            - climate.kitchen_thermostat
+            - climate.bedroom_1_thermostat
+        data:
+          temperature: 19
