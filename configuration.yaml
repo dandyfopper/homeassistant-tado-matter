@@ -1,0 +1,137 @@
+# Home Assistant Configuration for Tado Smart Thermostats
+# This configuration assumes your Tado devices are connected via Matter
+
+# Default configuration
+default_config:
+
+# Matter integration for Tado devices
+matter:
+
+# Frontend for custom dashboards
+frontend:
+  themes: !include_dir_merge_named themes
+
+# Enable the HTTP component for web interface
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 127.0.0.1
+    - ::1
+
+# Logger for debugging
+logger:
+  default: info
+  logs:
+    homeassistant.components.matter: debug
+
+# Template sensors for enhanced Tado data
+template:
+  - sensor:
+      - name: "Living Room Temperature Status"
+        state: >
+          {% set temp = states('climate.living_room_tado') | float %}
+          {% if temp < 18 %}
+            cold
+          {% elif temp < 22 %}
+            comfortable
+          {% else %}
+            warm
+          {% endif %}
+        icon: >
+          {% set temp = states('climate.living_room_tado') | float %}
+          {% if temp < 18 %}
+            mdi:snowflake
+          {% elif temp < 22 %}
+            mdi:thermometer
+          {% else %}
+            mdi:fire
+          {% endif %}
+
+      - name: "Bedroom Temperature Status"
+        state: >
+          {% set temp = states('climate.bedroom_tado') | float %}
+          {% if temp < 18 %}
+            cold
+          {% elif temp < 22 %}
+            comfortable
+          {% else %}
+            warm
+          {% endif %}
+        icon: >
+          {% set temp = states('climate.bedroom_tado') | float %}
+          {% if temp < 18 %}
+            mdi:snowflake
+          {% elif temp < 22 %}
+            mdi:thermometer
+          {% else %}
+            mdi:fire
+          {% endif %}
+
+      - name: "Kitchen Temperature Status"
+        state: >
+          {% set temp = states('climate.kitchen_tado') | float %}
+          {% if temp < 18 %}
+            cold
+          {% elif temp < 22 %}
+            comfortable
+          {% else %}
+            warm
+          {% endif %}
+        icon: >
+          {% set temp = states('climate.kitchen_tado') | float %}
+          {% if temp < 18 %}
+            mdi:snowflake
+          {% elif temp < 22 %}
+            mdi:thermometer
+          {% else %}
+            mdi:fire
+          {% endif %}
+
+      - name: "Office Temperature Status"
+        state: >
+          {% set temp = states('climate.office_tado') | float %}
+          {% if temp < 18 %}
+            cold
+          {% elif temp < 22 %}
+            comfortable
+          {% else %}
+            warm
+          {% endif %}
+        icon: >
+          {% set temp = states('climate.office_tado') | float %}
+          {% if temp < 18 %}
+            mdi:snowflake
+          {% elif temp < 22 %}
+            mdi:thermometer
+          {% else %}
+            mdi:fire
+          {% endif %}
+
+# Groups for organizing devices
+group:
+  tado_devices:
+    name: "Tado Climate Control"
+    entities:
+      - climate.living_room_tado
+      - climate.bedroom_tado
+      - climate.kitchen_tado
+      - climate.office_tado
+
+# Automations for Tado devices (optional)
+automation: !include automations.yaml
+
+# Scripts for common actions
+script: !include scripts.yaml
+
+# Recorder to store history
+recorder:
+  purge_keep_days: 30
+  include:
+    domains:
+      - climate
+      - sensor
+    entities:
+      - sensor.living_room_temperature_status
+      - sensor.bedroom_temperature_status
+      - sensor.kitchen_temperature_status
+      - sensor.office_temperature_status

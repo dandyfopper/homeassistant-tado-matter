@@ -1,0 +1,120 @@
+# Automations for Tado Smart Thermostats
+
+# Automation to adjust heating based on presence
+- id: tado_presence_heating
+  alias: "Tado: Adjust Heating Based on Presence"
+  description: "Lower temperature when nobody is home"
+  trigger:
+    - platform: state
+      entity_id: person.user  # Replace with your person entity
+      to: "away"
+      for:
+        minutes: 30
+  action:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.living_room_tado
+          - climate.bedroom_tado
+          - climate.kitchen_tado
+          - climate.office_tado
+      data:
+        temperature: 16
+
+# Automation to restore normal heating when someone comes home
+- id: tado_presence_heating_restore
+  alias: "Tado: Restore Heating When Home"
+  description: "Restore normal temperature when someone comes home"
+  trigger:
+    - platform: state
+      entity_id: person.user  # Replace with your person entity
+      to: "home"
+  action:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.living_room_tado
+          - climate.bedroom_tado
+          - climate.kitchen_tado
+          - climate.office_tado
+      data:
+        temperature: 21
+
+# Night mode automation
+- id: tado_night_mode
+  alias: "Tado: Night Mode"
+  description: "Lower bedroom temperature at night"
+  trigger:
+    - platform: time
+      at: "22:00:00"
+  action:
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.bedroom_tado
+      data:
+        temperature: 18
+
+# Morning warmup automation
+- id: tado_morning_warmup
+  alias: "Tado: Morning Warmup"
+  description: "Warm up house in the morning"
+  trigger:
+    - platform: time
+      at: "06:30:00"
+  condition:
+    - condition: state
+      entity_id: person.user  # Replace with your person entity
+      state: "home"
+  action:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.living_room_tado
+          - climate.kitchen_tado
+      data:
+        temperature: 21
+
+# Window open detection (if supported by your Tado devices)
+- id: tado_window_open_detection
+  alias: "Tado: Window Open Detection"
+  description: "Turn off heating when window is detected open"
+  trigger:
+    - platform: state
+      entity_id: 
+        - binary_sensor.living_room_tado_window_open
+        - binary_sensor.bedroom_tado_window_open
+        - binary_sensor.kitchen_tado_window_open
+        - binary_sensor.office_tado_window_open
+      to: "on"
+  action:
+    - service: climate.turn_off
+      target:
+        entity_id: "{{ trigger.entity_id | replace('binary_sensor.', 'climate.') | replace('_window_open', '') }}"
+    - service: notify.persistent_notification
+      data:
+        title: "Window Open Detected"
+        message: "Heating turned off in {{ state_attr(trigger.entity_id, 'friendly_name') | replace(' Window Open', '') }} due to open window detection."
+
+# Restore heating when window is closed
+- id: tado_window_closed_restore
+  alias: "Tado: Restore Heating When Window Closed"
+  description: "Turn heating back on when window is closed"
+  trigger:
+    - platform: state
+      entity_id: 
+        - binary_sensor.living_room_tado_window_open
+        - binary_sensor.bedroom_tado_window_open
+        - binary_sensor.kitchen_tado_window_open
+        - binary_sensor.office_tado_window_open
+      to: "off"
+      for:
+        minutes: 5
+  action:
+    - service: climate.turn_on
+      target:
+        entity_id: "{{ trigger.entity_id | replace('binary_sensor.', 'climate.') | replace('_window_open', '') }}"
+    - service: climate.set_temperature
+      target:
+        entity_id: "{{ trigger.entity_id | replace('binary_sensor.', 'climate.') | replace('_window_open', '') }}"
+      data:
+        temperature: 21

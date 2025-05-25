@@ -1,0 +1,324 @@
+# Tado Smart Thermostat Package
+# This package contains all Tado-related configuration
+
+# Enable package mode
+homeassistant:
+  packages: !include_dir_named packages
+
+# Climate template sensors for enhanced Tado data
+template:
+  - sensor:
+      # Living Room Sensors
+      - name: "Living Room Temperature Status"
+        unique_id: "living_room_temp_status"
+        state: >
+          {% set temp = states('climate.living_room_tado') | float(0) %}
+          {% if temp < 18 %}
+            cold
+          {% elif temp < 22 %}
+            comfortable
+          {% else %}
+            warm
+          {% endif %}
+        icon: >
+          {% set temp = states('climate.living_room_tado') | float(0) %}
+          {% if temp < 18 %}
+            mdi:snowflake
+          {% elif temp < 22 %}
+            mdi:thermometer
+          {% else %}
+            mdi:fire
+          {% endif %}
+        attributes:
+          temperature: "{{ states('sensor.living_room_tado_temperature') }}°C"
+          humidity: "{{ states('sensor.living_room_tado_humidity') }}%"
+          hvac_mode: "{{ state_attr('climate.living_room_tado', 'hvac_mode') }}"
+
+      # Bedroom Sensors
+      - name: "Bedroom Temperature Status"
+        unique_id: "bedroom_temp_status"
+        state: >
+          {% set temp = states('climate.bedroom_tado') | float(0) %}
+          {% if temp < 18 %}
+            cold
+          {% elif temp < 22 %}
+            comfortable
+          {% else %}
+            warm
+          {% endif %}
+        icon: >
+          {% set temp = states('climate.bedroom_tado') | float(0) %}
+          {% if temp < 18 %}
+            mdi:snowflake
+          {% elif temp < 22 %}
+            mdi:thermometer
+          {% else %}
+            mdi:fire
+          {% endif %}
+        attributes:
+          temperature: "{{ states('sensor.bedroom_tado_temperature') }}°C"
+          humidity: "{{ states('sensor.bedroom_tado_humidity') }}%"
+          hvac_mode: "{{ state_attr('climate.bedroom_tado', 'hvac_mode') }}"
+
+      # Kitchen Sensors
+      - name: "Kitchen Temperature Status"
+        unique_id: "kitchen_temp_status"
+        state: >
+          {% set temp = states('climate.kitchen_tado') | float(0) %}
+          {% if temp < 18 %}
+            cold
+          {% elif temp < 22 %}
+            comfortable
+          {% else %}
+            warm
+          {% endif %}
+        icon: >
+          {% set temp = states('climate.kitchen_tado') | float(0) %}
+          {% if temp < 18 %}
+            mdi:snowflake
+          {% elif temp < 22 %}
+            mdi:thermometer
+          {% else %}
+            mdi:fire
+          {% endif %}
+        attributes:
+          temperature: "{{ states('sensor.kitchen_tado_temperature') }}°C"
+          humidity: "{{ states('sensor.kitchen_tado_humidity') }}%"
+          hvac_mode: "{{ state_attr('climate.kitchen_tado', 'hvac_mode') }}"
+
+      # Office Sensors
+      - name: "Office Temperature Status"
+        unique_id: "office_temp_status"
+        state: >
+          {% set temp = states('climate.office_tado') | float(0) %}
+          {% if temp < 18 %}
+            cold
+          {% elif temp < 22 %}
+            comfortable
+          {% else %}
+            warm
+          {% endif %}
+        icon: >
+          {% set temp = states('climate.office_tado') | float(0) %}
+          {% if temp < 18 %}
+            mdi:snowflake
+          {% elif temp < 22 %}
+            mdi:thermometer
+          {% else %}
+            mdi:fire
+          {% endif %}
+        attributes:
+          temperature: "{{ states('sensor.office_tado_temperature') }}°C"
+          humidity: "{{ states('sensor.office_tado_humidity') }}%"
+          hvac_mode: "{{ state_attr('climate.office_tado', 'hvac_mode') }}"
+
+      # Home Temperature Average
+      - name: "Home Average Temperature"
+        unique_id: "home_avg_temperature"
+        unit_of_measurement: "°C"
+        state: >
+          {% set temps = [
+            states('sensor.living_room_tado_temperature') | float(0),
+            states('sensor.bedroom_tado_temperature') | float(0),
+            states('sensor.kitchen_tado_temperature') | float(0),
+            states('sensor.office_tado_temperature') | float(0)
+          ] %}
+          {{ (temps | sum / temps | length) | round(1) }}
+        icon: mdi:thermometer-lines
+
+# Groups for organizing Tado devices
+group:
+  tado_all_devices:
+    name: "All Tado Devices"
+    icon: mdi:radiator
+    entities:
+      - climate.living_room_tado
+      - climate.bedroom_tado
+      - climate.kitchen_tado
+      - climate.office_tado
+
+  tado_radiator_thermostats:
+    name: "Tado Radiator Thermostats"
+    icon: mdi:radiator
+    entities:
+      - climate.living_room_tado
+      - climate.bedroom_tado
+      - climate.kitchen_tado
+
+  tado_wireless_thermostats:
+    name: "Tado Wireless Thermostats"
+    icon: mdi:thermostat
+    entities:
+      - climate.office_tado
+
+  tado_temperature_sensors:
+    name: "Tado Temperature Sensors"
+    icon: mdi:thermometer
+    entities:
+      - sensor.living_room_tado_temperature
+      - sensor.bedroom_tado_temperature
+      - sensor.kitchen_tado_temperature
+      - sensor.office_tado_temperature
+
+  tado_humidity_sensors:
+    name: "Tado Humidity Sensors"
+    icon: mdi:water-percent
+    entities:
+      - sensor.living_room_tado_humidity
+      - sensor.bedroom_tado_humidity
+      - sensor.kitchen_tado_humidity
+      - sensor.office_tado_humidity
+
+# Input helpers for dashboard controls
+input_select:
+  tado_home_mode:
+    name: "Tado Home Mode"
+    options:
+      - "Comfort"
+      - "Eco"
+      - "Party"
+      - "Sleep"
+      - "Vacation"
+      - "Manual"
+    initial: "Comfort"
+    icon: mdi:home-thermometer
+
+input_number:
+  tado_target_temperature:
+    name: "Target Temperature"
+    min: 10
+    max: 30
+    step: 0.5
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+
+# Utility meters for energy tracking (if supported)
+utility_meter:
+  tado_daily_energy:
+    source: sensor.tado_energy_consumption
+    cycle: daily
+  tado_monthly_energy:
+    source: sensor.tado_energy_consumption
+    cycle: monthly
+
+# Automations specific to Tado package
+automation:
+  # Home mode automation
+  - id: tado_home_mode_changed
+    alias: "Tado: Home Mode Changed"
+    trigger:
+      - platform: state
+        entity_id: input_select.tado_home_mode
+    action:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_home_mode
+                state: "Comfort"
+            sequence:
+              - service: script.set_all_tado_comfort
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_home_mode
+                state: "Eco"
+            sequence:
+              - service: script.set_all_tado_eco
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_home_mode
+                state: "Party"
+            sequence:
+              - service: script.set_party_mode
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_home_mode
+                state: "Sleep"
+            sequence:
+              - service: script.set_sleep_mode
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_home_mode
+                state: "Vacation"
+            sequence:
+              - service: script.set_vacation_mode
+
+  # Temperature sync automation
+  - id: tado_sync_target_temperature
+    alias: "Tado: Sync Target Temperature"
+    trigger:
+      - platform: state
+        entity_id: input_number.tado_target_temperature
+    condition:
+      - condition: state
+        entity_id: input_select.tado_home_mode
+        state: "Manual"
+    action:
+      - service: climate.set_temperature
+        target:
+          entity_id:
+            - climate.living_room_tado
+            - climate.bedroom_tado
+            - climate.kitchen_tado
+            - climate.office_tado
+        data:
+          temperature: "{{ states('input_number.tado_target_temperature') | float }}"
+
+# Scripts for Tado control
+script:
+  # Quick mode scripts
+  tado_quick_comfort:
+    alias: "Quick Comfort Mode"
+    icon: mdi:home-heart
+    sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.tado_home_mode
+        data:
+          option: "Comfort"
+
+  tado_quick_eco:
+    alias: "Quick Eco Mode"
+    icon: mdi:leaf
+    sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.tado_home_mode
+        data:
+          option: "Eco"
+
+  tado_quick_boost:
+    alias: "Quick Boost All"
+    icon: mdi:fire
+    sequence:
+      - service: climate.set_temperature
+        target:
+          entity_id:
+            - climate.living_room_tado
+            - climate.bedroom_tado
+            - climate.kitchen_tado
+            - climate.office_tado
+        data:
+          temperature: 25
+      - delay:
+          hours: 1
+      - service: script.set_all_tado_comfort
+
+# Binary sensors for status
+binary_sensor:
+  - platform: template
+    sensors:
+      tado_any_heating:
+        friendly_name: "Any Tado Heating"
+        value_template: >
+          {{
+            is_state_attr('climate.living_room_tado', 'hvac_action', 'heating') or
+            is_state_attr('climate.bedroom_tado', 'hvac_action', 'heating') or
+            is_state_attr('climate.kitchen_tado', 'hvac_action', 'heating') or
+            is_state_attr('climate.office_tado', 'hvac_action', 'heating')
+          }}
+        icon_template: >
+          {% if is_state('binary_sensor.tado_any_heating', 'on') %}
+            mdi:fire
+          {% else %}
+            mdi:fire-off
+          {% endif %}

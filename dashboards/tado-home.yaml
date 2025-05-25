@@ -1,0 +1,1079 @@
+# Tado Home Dashboard Configuration
+title: Tado Smart Home
+theme: tado_theme
+icon: mdi:home-thermometer
+background: center / cover no-repeat url("/local/house-background.jpg") fixed
+path: tado-home
+
+cards:
+  # Header card with house overview
+  - type: custom:button-card
+    name: "Smart Home Climate Control"
+    icon: mdi:home-thermometer-outline
+    styles:
+      card:
+        - height: 80px
+        - background: "linear-gradient(135deg, #FF6900 0%, #FF8A50 100%)"
+        - color: white
+        - border-radius: 15px
+        - box-shadow: "0 4px 8px rgba(255, 105, 0, 0.3)"
+      name:
+        - font-size: 24px
+        - font-weight: bold
+      icon:
+        - font-size: 32px
+    tap_action:
+      action: none
+
+  # Room configuration controls
+  - type: horizontal-stack
+    cards:
+      - type: entities
+        title: House Configuration
+        icon: mdi:home-edit
+        show_header_toggle: false
+        entities:
+          - entity: input_select.tado_room_layout_preset
+            name: Layout Preset
+          - type: divider
+          - entity: input_number.tado_number_of_bedrooms
+            name: Number of Bedrooms
+          - entity: input_boolean.tado_has_garage
+            name: Include Garage
+          - entity: input_boolean.tado_has_loft
+            name: Include Loft
+          - type: divider
+          - entity: sensor.room_configuration_summary
+            name: Layout Type
+          - entity: sensor.active_rooms_configuration
+            name: Current Layout
+        style: |
+          ha-card {
+            border-radius: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          }
+
+      - type: custom:button-card
+        entity: sensor.room_configuration_summary
+        name: "Room Layout"
+        icon: mdi:home-floor-plan
+        show_state: true
+        styles:
+          card:
+            - height: 160px
+            - border-radius: 15px
+            - box-shadow: "0 2px 8px rgba(0,0,0,0.1)"
+            - background: "linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%)"
+          name:
+            - font-size: 14px
+            - font-weight: bold
+            - color: "#333"
+          state:
+            - font-size: 16px
+            - color: "#FF6900"
+            - font-weight: bold
+          icon:
+            - color: "#FF6900"
+        custom_fields:
+          mini_layout: |
+            [[[
+              const bedrooms = parseInt(states['input_number.tado_number_of_bedrooms']?.state) || 4;
+              const garage = states['input_boolean.tado_has_garage']?.state === 'on';
+              const loft = states['input_boolean.tado_has_loft']?.state === 'on';
+              
+              return `<div style="position: absolute; top: 35px; left: 10px; right: 10px; height: 80px;">
+                <object data="/local/room-layout-mini.svg" type="image/svg+xml" style="width: 100%; height: 100%; 
+                  --show-bedroom-1: ${bedrooms >= 1 ? 'block' : 'none'};
+                  --show-bedroom-2: ${bedrooms >= 2 ? 'block' : 'none'};
+                  --show-bedroom-3: ${bedrooms >= 3 ? 'block' : 'none'};
+                  --show-bedroom-4: ${bedrooms >= 4 ? 'block' : 'none'};
+                  --show-bedroom-5: ${bedrooms >= 5 ? 'block' : 'none'};
+                  --show-bedroom-6: ${bedrooms >= 6 ? 'block' : 'none'};
+                  --show-garage: ${garage ? 'block' : 'none'};
+                  --show-loft: ${loft ? 'block' : 'none'};"></object>
+              </div>`;
+            ]]]
+          info: |
+            [[[
+              const config = states['sensor.active_rooms_configuration'];
+              if (!config) return 'Loading...';
+              
+              const bedrooms = config.attributes?.bedrooms || '4';
+              const garage = config.attributes?.has_garage === true ? 'Yes' : 'No';
+              const loft = config.attributes?.has_loft === true ? 'Yes' : 'No';
+              const totalRooms = config.attributes?.total_rooms || 'N/A';
+              
+              return `<div style="font-size: 10px; color: #727272; text-align: center; line-height: 1.3; position: absolute; bottom: 8px; left: 0; right: 0;">
+                ${bedrooms} Bedrooms • Garage: ${garage} • Loft: ${loft}<br/>
+                <span style="color: #FF6900; font-weight: bold;">Total: ${totalRooms} climate zones</span>
+              </div>`;
+            ]]]
+        styles:
+          custom_fields:
+            info:
+              - position: absolute
+              - bottom: 10px
+              - left: 50%
+              - transform: translateX(-50%)
+
+  # Quick layout preset buttons
+  - type: horizontal-stack
+    cards:
+      - type: custom:button-card
+        name: "Studio"
+        icon: mdi:home-city-outline
+        styles:
+          card:
+            - height: 60px
+            - border-radius: 12px
+            - box-shadow: "0 2px 6px rgba(0,0,0,0.1)"
+            - background: "[[[ return states['input_select.tado_room_layout_preset'].state === 'Studio Apartment (1 bedroom, no garage, no loft)' ? '#FF6900' : '#f8f9fa'; ]]]"
+          name:
+            - font-size: 12px
+            - font-weight: bold
+            - color: "[[[ return states['input_select.tado_room_layout_preset'].state === 'Studio Apartment (1 bedroom, no garage, no loft)' ? 'white' : '#333'; ]]]"
+          icon:
+            - color: "[[[ return states['input_select.tado_room_layout_preset'].state === 'Studio Apartment (1 bedroom, no garage, no loft)' ? 'white' : '#FF6900'; ]]]"
+            - font-size: 18px
+        tap_action:
+          action: call-service
+          service: input_select.select_option
+          service_data:
+            entity_id: input_select.tado_room_layout_preset
+            option: "Studio Apartment (1 bedroom, no garage, no loft)"
+
+      - type: custom:button-card
+        name: "Small House"
+        icon: mdi:home-outline
+        styles:
+          card:
+            - height: 60px
+            - border-radius: 12px
+            - box-shadow: "0 2px 6px rgba(0,0,0,0.1)"
+            - background: "[[[ return states['input_select.tado_room_layout_preset'].state === 'Small House (2 bedrooms, garage, no loft)' ? '#FF6900' : '#f8f9fa'; ]]]"
+          name:
+            - font-size: 12px
+            - font-weight: bold
+            - color: "[[[ return states['input_select.tado_room_layout_preset'].state === 'Small House (2 bedrooms, garage, no loft)' ? 'white' : '#333'; ]]]"
+          icon:
+            - color: "[[[ return states['input_select.tado_room_layout_preset'].state === 'Small House (2 bedrooms, garage, no loft)' ? 'white' : '#FF6900'; ]]]"
+            - font-size: 18px
+        tap_action:
+          action: call-service
+          service: input_select.select_option
+          service_data:
+            entity_id: input_select.tado_room_layout_preset
+            option: "Small House (2 bedrooms, garage, no loft)"
+
+      - type: custom:button-card
+        name: "Family Home"
+        icon: mdi:home
+        styles:
+          card:
+            - height: 60px
+            - border-radius: 12px
+            - box-shadow: "0 2px 6px rgba(0,0,0,0.1)"
+            - background: "[[[ return states['input_select.tado_room_layout_preset'].state === 'Family Home (3 bedrooms, garage, loft)' ? '#FF6900' : '#f8f9fa'; ]]]"
+          name:
+            - font-size: 12px
+            - font-weight: bold
+            - color: "[[[ return states['input_select.tado_room_layout_preset'].state === 'Family Home (3 bedrooms, garage, loft)' ? 'white' : '#333'; ]]]"
+          icon:
+            - color: "[[[ return states['input_select.tado_room_layout_preset'].state === 'Family Home (3 bedrooms, garage, loft)' ? 'white' : '#FF6900'; ]]]"
+            - font-size: 18px
+        tap_action:
+          action: call-service
+          service: input_select.select_option
+          service_data:
+            entity_id: input_select.tado_room_layout_preset
+            option: "Family Home (3 bedrooms, garage, loft)"
+
+      - type: custom:button-card
+        name: "Large Family"
+        icon: mdi:home-plus
+        styles:
+          card:
+            - height: 60px
+            - border-radius: 12px
+            - box-shadow: "0 2px 6px rgba(0,0,0,0.1)"
+            - background: "[[[ return states['input_select.tado_room_layout_preset'].state === 'Large Family Home (4 bedrooms, garage, loft)' ? '#FF6900' : '#f8f9fa'; ]]]"
+          name:
+            - font-size: 12px
+            - font-weight: bold
+            - color: "[[[ return states['input_select.tado_room_layout_preset'].state === 'Large Family Home (4 bedrooms, garage, loft)' ? 'white' : '#333'; ]]]"
+          icon:
+            - color: "[[[ return states['input_select.tado_room_layout_preset'].state === 'Large Family Home (4 bedrooms, garage, loft)' ? 'white' : '#FF6900'; ]]]"
+            - font-size: 18px
+        tap_action:
+          action: call-service
+          service: input_select.select_option
+          service_data:
+            entity_id: input_select.tado_room_layout_preset
+            option: "Large Family Home (4 bedrooms, garage, loft)"
+
+  # Dynamic house layout using conditional card
+  - type: conditional
+    conditions:
+      - entity: sensor.active_rooms_configuration
+        state_not: "unavailable"
+    card:
+      type: picture-elements
+      image: /local/house-layout-dynamic.svg
+      style: |
+        ha-card {
+          border-radius: 15px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          overflow: hidden;
+        }
+        ha-card img {
+          filter: var(--room-layout-filter, none);
+        }
+        :host {
+          --show-bedroom-1: {% if states('input_number.tado_number_of_bedrooms') | int >= 1 %}block{% else %}none{% endif %};
+          --show-bedroom-2: {% if states('input_number.tado_number_of_bedrooms') | int >= 2 %}block{% else %}none{% endif %};
+          --show-bedroom-3: {% if states('input_number.tado_number_of_bedrooms') | int >= 3 %}block{% else %}none{% endif %};
+          --show-bedroom-4: {% if states('input_number.tado_number_of_bedrooms') | int >= 4 %}block{% else %}none{% endif %};
+          --show-bedroom-5: {% if states('input_number.tado_number_of_bedrooms') | int >= 5 %}block{% else %}none{% endif %};
+          --show-bedroom-6: {% if states('input_number.tado_number_of_bedrooms') | int >= 6 %}block{% else %}none{% endif %};
+          --show-garage: {% if is_state('input_boolean.tado_has_garage', 'on') %}block{% else %}none{% endif %};
+          --show-loft: {% if is_state('input_boolean.tado_has_loft', 'on') %}block{% else %}none{% endif %};
+        }
+    elements:
+      # Living Room Thermostat (bottom left)
+      - type: state-icon
+        entity: climate.living_room_tado
+        style:
+          top: 75%
+          left: 25%
+          transform: scale(1.5)
+        tap_action:
+          action: more-info
+      - type: state-label
+        entity: sensor.living_room_tado_temperature
+        style:
+          top: 82%
+          left: 25%
+          color: white
+          background: "rgba(255, 105, 0, 0.8)"
+          border-radius: 10px
+          padding: 2px 8px
+          font-weight: bold
+      - type: state-label
+        entity: sensor.living_room_tado_humidity
+        style:
+          top: 88%
+          left: 25%
+          color: white
+          background: "rgba(33, 150, 243, 0.8)"
+          border-radius: 10px
+          padding: 2px 8px
+          font-size: 12px
+
+      # Bedroom Thermostat (top right)
+      - type: state-icon
+        entity: climate.bedroom_tado
+        style:
+          top: 25%
+          left: 75%
+          transform: scale(1.5)
+        tap_action:
+          action: more-info
+      - type: state-label
+        entity: sensor.bedroom_tado_temperature
+        style:
+          top: 32%
+          left: 75%
+          color: white
+          background: "rgba(255, 105, 0, 0.8)"
+          border-radius: 10px
+          padding: 2px 8px
+          font-weight: bold
+      - type: state-label
+        entity: sensor.bedroom_tado_humidity
+        style:
+          top: 38%
+          left: 75%
+          color: white
+          background: "rgba(33, 150, 243, 0.8)"
+          border-radius: 10px
+          padding: 2px 8px
+          font-size: 12px
+
+      # Kitchen Thermostat (top left)
+      - type: state-icon
+        entity: climate.kitchen_tado
+        style:
+          top: 25%
+          left: 25%
+          transform: scale(1.5)
+        tap_action:
+          action: more-info
+      - type: state-label
+        entity: sensor.kitchen_tado_temperature
+        style:
+          top: 32%
+          left: 25%
+          color: white
+          background: "rgba(255, 105, 0, 0.8)"
+          border-radius: 10px
+          padding: 2px 8px
+          font-weight: bold
+      - type: state-label
+        entity: sensor.kitchen_tado_humidity
+        style:
+          top: 38%
+          left: 25%
+          color: white
+          background: "rgba(33, 150, 243, 0.8)"
+          border-radius: 10px
+          padding: 2px 8px
+          font-size: 12px
+
+      # Office/Study Thermostat (bottom right)
+      - type: state-icon
+        entity: climate.office_tado
+        style:
+          top: 75%
+          left: 75%
+          transform: scale(1.5)
+        tap_action:
+          action: more-info
+      - type: state-label
+        entity: sensor.office_tado_temperature
+        style:
+          top: 82%
+          left: 75%
+          color: white
+          background: "rgba(255, 105, 0, 0.8)"
+          border-radius: 10px
+          padding: 2px 8px
+          font-weight: bold
+      - type: state-label
+        entity: sensor.office_tado_humidity
+        style:
+          top: 88%
+          left: 75%
+          color: white
+          background: "rgba(33, 150, 243, 0.8)"
+          border-radius: 10px
+          padding: 2px 8px
+          font-size: 12px
+
+      # Always present rooms
+      # Living Room Thermostat
+      - type: state-icon
+        entity: climate.living_room_tado
+        style:
+          top: 42%
+          left: 24%
+          transform: scale(1.5)
+        tap_action:
+          action: more-info
+      - type: state-label
+        entity: sensor.living_room_tado_temperature
+        style:
+          top: 50%
+          left: 24%
+          color: white
+          background: "rgba(255, 105, 0, 0.8)"
+          border-radius: 10px
+          padding: 2px 8px
+          font-weight: bold
+      - type: state-label
+        entity: sensor.living_room_tado_humidity
+        style:
+          top: 56%
+          left: 24%
+          color: white
+          background: "rgba(33, 150, 243, 0.8)"
+          border-radius: 10px
+          padding: 2px 8px
+          font-size: 12px
+
+      # Kitchen Thermostat
+      - type: state-icon
+        entity: climate.kitchen_tado
+        style:
+          top: 42%
+          left: 46%
+          transform: scale(1.5)
+        tap_action:
+          action: more-info
+      - type: state-label
+        entity: sensor.kitchen_tado_temperature
+        style:
+          top: 50%
+          left: 46%
+          color: white
+          background: "rgba(255, 105, 0, 0.8)"
+          border-radius: 10px
+          padding: 2px 8px
+          font-weight: bold
+
+      # Bedroom 1 (always shown when bedrooms >= 1)
+      - type: conditional
+        conditions:
+          - entity: input_number.tado_number_of_bedrooms
+            state_not: "0"
+        elements:
+          - type: state-icon
+            entity: climate.bedroom_1_tado
+            style:
+              top: 42%
+              left: 80%
+              transform: scale(1.5)
+            tap_action:
+              action: more-info
+          - type: state-label
+            entity: sensor.bedroom_1_tado_temperature
+            style:
+              top: 50%
+              left: 80%
+              color: white
+              background: "rgba(255, 105, 0, 0.8)"
+              border-radius: 10px
+              padding: 2px 8px
+              font-weight: bold
+
+      # Bedroom 2 (shown when bedrooms >= 2)
+      - type: conditional
+        conditions:
+          - entity: input_number.tado_number_of_bedrooms
+            state_not: "0"
+            state_not: "1"
+        elements:
+          - type: state-icon
+            entity: climate.bedroom_2_tado
+            style:
+              top: 70%
+              left: 22%
+              transform: scale(1.5)
+            tap_action:
+              action: more-info
+          - type: state-label
+            entity: sensor.bedroom_2_tado_temperature
+            style:
+              top: 78%
+              left: 22%
+              color: white
+              background: "rgba(255, 105, 0, 0.8)"
+              border-radius: 10px
+              padding: 2px 8px
+              font-weight: bold
+
+      # Bedroom 3 (shown when bedrooms >= 3)
+      - type: conditional
+        conditions:
+          - entity: input_number.tado_number_of_bedrooms
+            state: "3"
+          - entity: input_number.tado_number_of_bedrooms
+            state: "4"
+          - entity: input_number.tado_number_of_bedrooms
+            state: "5"
+          - entity: input_number.tado_number_of_bedrooms
+            state: "6"
+        condition_type: or
+        elements:
+          - type: state-icon
+            entity: climate.bedroom_3_tado
+            style:
+              top: 70%
+              left: 44%
+              transform: scale(1.5)
+            tap_action:
+              action: more-info
+          - type: state-label
+            entity: sensor.bedroom_3_tado_temperature
+            style:
+              top: 78%
+              left: 44%
+              color: white
+              background: "rgba(255, 105, 0, 0.8)"
+              border-radius: 10px
+              padding: 2px 8px
+              font-weight: bold
+
+      # Bedroom 4 (shown when bedrooms >= 4)
+      - type: conditional
+        conditions:
+          - entity: input_number.tado_number_of_bedrooms
+            state: "4"
+          - entity: input_number.tado_number_of_bedrooms
+            state: "5"
+          - entity: input_number.tado_number_of_bedrooms
+            state: "6"
+        condition_type: or
+        elements:
+          - type: state-icon
+            entity: climate.bedroom_4_tado
+            style:
+              top: 70%
+              left: 66%
+              transform: scale(1.5)
+            tap_action:
+              action: more-info
+          - type: state-label
+            entity: sensor.bedroom_4_tado_temperature
+            style:
+              top: 78%
+              left: 66%
+              color: white
+              background: "rgba(255, 105, 0, 0.8)"
+              border-radius: 10px
+              padding: 2px 8px
+              font-weight: bold
+
+      # Bedroom 5 (shown when bedrooms >= 5)
+      - type: conditional
+        conditions:
+          - entity: input_number.tado_number_of_bedrooms
+            state: "5"
+          - entity: input_number.tado_number_of_bedrooms
+            state: "6"
+        condition_type: or
+        elements:
+          - type: state-icon
+            entity: climate.bedroom_5_tado
+            style:
+              top: 88%
+              left: 22%
+              transform: scale(1.5)
+            tap_action:
+              action: more-info
+          - type: state-label
+            entity: sensor.bedroom_5_tado_temperature
+            style:
+              top: 95%
+              left: 22%
+              color: white
+              background: "rgba(255, 105, 0, 0.8)"
+              border-radius: 10px
+              padding: 2px 8px
+              font-weight: bold
+
+      # Bedroom 6 (shown when bedrooms >= 6)
+      - type: conditional
+        conditions:
+          - entity: input_boolean.tado_number_of_bedrooms
+            state: "6"
+        elements:
+          - type: state-icon
+            entity: climate.bedroom_6_tado
+            style:
+              top: 88%
+              left: 44%
+              transform: scale(1.5)
+            tap_action:
+              action: more-info
+          - type: state-label
+            entity: sensor.bedroom_6_tado_temperature
+            style:
+              top: 95%
+              left: 44%
+              color: white
+              background: "rgba(255, 105, 0, 0.8)"
+              border-radius: 10px
+              padding: 2px 8px
+              font-weight: bold
+
+      # Garage (conditional)
+      - type: conditional
+        conditions:
+          - entity: input_boolean.tado_has_garage
+            state: "on"
+        elements:
+          - type: state-icon
+            entity: climate.garage_tado
+            style:
+              top: 70%
+              left: 82%
+              transform: scale(1.5)
+            tap_action:
+              action: more-info
+          - type: state-label
+            entity: sensor.garage_tado_temperature
+            style:
+              top: 78%
+              left: 82%
+              color: white
+              background: "rgba(255, 105, 0, 0.8)"
+              border-radius: 10px
+              padding: 2px 8px
+              font-weight: bold
+
+      # Loft (conditional)
+      - type: conditional
+        conditions:
+          - entity: input_boolean.tado_has_loft
+            state: "on"
+        elements:
+          - type: state-icon
+            entity: climate.loft_tado
+            style:
+              top: 23%
+              left: 50%
+              transform: scale(1.5)
+            tap_action:
+              action: more-info
+          - type: state-label
+            entity: sensor.loft_tado_temperature
+            style:
+              top: 30%
+              left: 50%
+              color: white
+              background: "rgba(255, 105, 0, 0.8)"
+              border-radius: 10px
+              padding: 2px 8px
+              font-weight: bold
+
+  # Quick control cards row
+  - type: horizontal-stack
+    cards:
+      # Living Room Control
+      - type: custom:button-card
+        entity: climate.living_room_tado
+        name: Living Room
+        icon: mdi:sofa
+        show_state: true
+        show_entity_picture: false
+        styles:
+          card:
+            - height: 120px
+            - border-radius: 15px
+            - box-shadow: "0 2px 8px rgba(0,0,0,0.1)"
+          name:
+            - font-size: 14px
+            - font-weight: bold
+          state:
+            - font-size: 16px
+            - color: "#FF6900"
+        tap_action:
+          action: more-info
+        custom_fields:
+          temp: |
+            [[[
+              return `<div style="font-size: 12px; color: #727272;">
+                ${states['sensor.living_room_tado_temperature']?.state || 'N/A'}°C
+              </div>`;
+            ]]]
+        styles:
+          custom_fields:
+            temp:
+              - position: absolute
+              - bottom: 10px
+              - left: 50%
+              - transform: translateX(-50%)
+
+      # Bedroom Control
+      - type: custom:button-card
+        entity: climate.bedroom_tado
+        name: Bedroom
+        icon: mdi:bed
+        show_state: true
+        styles:
+          card:
+            - height: 120px
+            - border-radius: 15px
+            - box-shadow: "0 2px 8px rgba(0,0,0,0.1)"
+          name:
+            - font-size: 14px
+            - font-weight: bold
+          state:
+            - font-size: 16px
+            - color: "#FF6900"
+        tap_action:
+          action: more-info
+        custom_fields:
+          temp: |
+            [[[
+              return `<div style="font-size: 12px; color: #727272;">
+                ${states['sensor.bedroom_tado_temperature']?.state || 'N/A'}°C
+              </div>`;
+            ]]]
+        styles:
+          custom_fields:
+            temp:
+              - position: absolute
+              - bottom: 10px
+              - left: 50%
+              - transform: translateX(-50%)
+
+      # Kitchen Control
+      - type: custom:button-card
+        entity: climate.kitchen_tado
+        name: Kitchen
+        icon: mdi:chef-hat
+        show_state: true
+        styles:
+          card:
+            - height: 120px
+            - border-radius: 15px
+            - box-shadow: "0 2px 8px rgba(0,0,0,0.1)"
+          name:
+            - font-size: 14px
+            - font-weight: bold
+          state:
+            - font-size: 16px
+            - color: "#FF6900"
+        tap_action:
+          action: more-info
+        custom_fields:
+          temp: |
+            [[[
+              return `<div style="font-size: 12px; color: #727272;">
+                ${states['sensor.kitchen_tado_temperature']?.state || 'N/A'}°C
+              </div>`;
+            ]]]
+        styles:
+          custom_fields:
+            temp:
+              - position: absolute
+              - bottom: 10px
+              - left: 50%
+              - transform: translateX(-50%)
+
+      # Office Control
+      - type: custom:button-card
+        entity: climate.office_tado
+        name: Office
+        icon: mdi:desk
+        show_state: true
+        styles:
+          card:
+            - height: 120px
+            - border-radius: 15px
+            - box-shadow: "0 2px 8px rgba(0,0,0,0.1)"
+          name:
+            - font-size: 14px
+            - font-weight: bold
+          state:
+            - font-size: 16px
+            - color: "#FF6900"
+        tap_action:
+          action: more-info
+        custom_fields:
+          temp: |
+            [[[
+              return `<div style="font-size: 12px; color: #727272;">
+                ${states['sensor.office_tado_temperature']?.state || 'N/A'}°C
+              </div>`;
+            ]]]
+        styles:
+          custom_fields:
+            temp:
+              - position: absolute
+              - bottom: 10px
+              - left: 50%
+              - transform: translateX(-50%)
+
+  # Dynamic quick control cards based on room configuration
+  - type: custom:auto-entities
+    card:
+      type: horizontal-stack
+      title: Room Controls
+    filter:
+      template: |
+        {% set bedrooms = states('input_number.tado_number_of_bedrooms') | int %}
+        {% set has_garage = is_state('input_boolean.tado_has_garage', 'on') %}
+        {% set has_loft = is_state('input_boolean.tado_has_loft', 'on') %}
+        {% set cards = [] %}
+        
+        {# Always include living room and kitchen #}
+        {% set cards = cards + [
+          {
+            "type": "custom:button-card",
+            "entity": "climate.living_room_tado",
+            "name": "Living Room",
+            "icon": "mdi:sofa",
+            "show_state": true,
+            "styles": {
+              "card": ["height: 120px", "border-radius: 15px", "box-shadow: 0 2px 8px rgba(0,0,0,0.1)"],
+              "name": ["font-size: 14px", "font-weight: bold"],
+              "state": ["font-size: 16px", "color: #FF6900"]
+            },
+            "tap_action": {"action": "more-info"}
+          },
+          {
+            "type": "custom:button-card",
+            "entity": "climate.kitchen_tado",
+            "name": "Kitchen",
+            "icon": "mdi:chef-hat",
+            "show_state": true,
+            "styles": {
+              "card": ["height: 120px", "border-radius: 15px", "box-shadow: 0 2px 8px rgba(0,0,0,0.1)"],
+              "name": ["font-size: 14px", "font-weight: bold"],
+              "state": ["font-size: 16px", "color: #FF6900"]
+            },
+            "tap_action": {"action": "more-info"}
+          }
+        ] %}
+        
+        {# Add bedrooms based on configuration #}
+        {% for i in range(1, bedrooms + 1) %}
+          {% set bedroom_icon = "mdi:bed" if i <= 2 else "mdi:bed-outline" %}
+          {% set cards = cards + [{
+            "type": "custom:button-card",
+            "entity": "climate.bedroom_" + i|string + "_tado",
+            "name": "Bedroom " + i|string,
+            "icon": bedroom_icon,
+            "show_state": true,
+            "tap_action": {"action": "more-info"}
+          }] %}
+        {% endfor %}
+        
+        {# Add garage if enabled #}
+        {% if has_garage %}
+          {% set cards = cards + [{
+            "type": "custom:button-card",
+            "entity": "climate.garage_tado",
+            "name": "Garage",
+            "icon": "mdi:garage",
+            "show_state": true,
+            "tap_action": {"action": "more-info"}
+          }] %}
+        {% endif %}
+        
+        {# Add loft if enabled #}
+        {% if has_loft %}
+          {% set cards = cards + [{
+            "type": "custom:button-card",
+            "entity": "climate.loft_tado",
+            "name": "Loft",
+            "icon": "mdi:home-roof",
+            "show_state": true,
+            "tap_action": {"action": "more-info"}
+          }] %}
+        {% endif %}
+        
+        {{ cards }}
+
+  # Dynamic climate overview card
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Climate Overview
+      icon: mdi:thermometer-lines
+      style: |
+        ha-card {
+          border-radius: 15px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    filter:
+      template: |
+        {% set bedrooms = states('input_number.tado_number_of_bedrooms') | int %}
+        {% set has_garage = is_state('input_boolean.tado_has_garage', 'on') %}
+        {% set has_loft = is_state('input_boolean.tado_has_loft', 'on') %}
+        {% set entities = [] %}
+        
+        {# Always include core rooms #}
+        {% set entities = entities + [
+          {"entity": "climate.living_room_tado", "name": "Living Room Thermostat", "icon": "mdi:radiator"},
+          {"entity": "climate.kitchen_tado", "name": "Kitchen Thermostat", "icon": "mdi:radiator"}
+        ] %}
+        
+        {# Add bedrooms #}
+        {% for i in range(1, bedrooms + 1) %}
+          {% set entities = entities + [{"entity": "climate.bedroom_" + i|string + "_tado", "name": "Bedroom " + i|string + " Thermostat", "icon": "mdi:radiator"}] %}
+        {% endfor %}
+        
+        {# Add garage if enabled #}
+        {% if has_garage %}
+          {% set entities = entities + [{"entity": "climate.garage_tado", "name": "Garage Thermostat", "icon": "mdi:radiator"}] %}
+        {% endif %}
+        
+        {# Add loft if enabled #}
+        {% if has_loft %}
+          {% set entities = entities + [{"entity": "climate.loft_tado", "name": "Loft Thermostat", "icon": "mdi:thermostat"}] %}
+        {% endif %}
+        
+        {{ entities }}
+
+  # Dynamic temperature history graph
+  - type: custom:auto-entities
+    card:
+      type: history-graph
+      title: Temperature History
+      hours_to_show: 24
+      refresh_interval: 60
+      style: |
+        ha-card {
+          border-radius: 15px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    filter:
+      template: |
+        {% set bedrooms = states('input_number.tado_number_of_bedrooms') | int %}
+        {% set has_garage = is_state('input_boolean.tado_has_garage', 'on') %}
+        {% set has_loft = is_state('input_boolean.tado_has_loft', 'on') %}
+        {% set entities = [] %}
+        
+        {# Always include core rooms #}
+        {% set entities = entities + [
+          {"entity": "sensor.living_room_tado_temperature", "name": "Living Room"},
+          {"entity": "sensor.kitchen_tado_temperature", "name": "Kitchen"}
+        ] %}
+        
+        {# Add bedrooms #}
+        {% for i in range(1, bedrooms + 1) %}
+          {% set entities = entities + [{"entity": "sensor.bedroom_" + i|string + "_tado_temperature", "name": "Bedroom " + i|string}] %}
+        {% endfor %}
+        
+        {# Add garage if enabled #}
+        {% if has_garage %}
+          {% set entities = entities + [{"entity": "sensor.garage_tado_temperature", "name": "Garage"}] %}
+        {% endif %}
+        
+        {# Add loft if enabled #}
+        {% if has_loft %}
+          {% set entities = entities + [{"entity": "sensor.loft_tado_temperature", "name": "Loft"}] %}
+        {% endif %}
+        
+        {{ entities }}
+
+  # Room status overview with dynamic layout
+  - type: custom:auto-entities
+    card:
+      type: grid
+      columns: 3
+      square: false
+      title: "Room Status Overview"
+      style: |
+        ha-card {
+          border-radius: 15px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    filter:
+      template: |
+        {% set bedrooms = states('input_number.tado_number_of_bedrooms') | int %}
+        {% set has_garage = is_state('input_boolean.tado_has_garage', 'on') %}
+        {% set has_loft = is_state('input_boolean.tado_has_loft', 'on') %}
+        {% set cards = [] %}
+        
+        {# Always include core rooms #}
+        {% set cards = cards + [
+          {
+            "type": "custom:button-card",
+            "entity": "climate.living_room_tado",
+            "name": "Living Room",
+            "icon": "mdi:sofa",
+            "show_state": true,
+            "show_last_changed": false,
+            "custom_fields": {
+              "temp": "[[[ return states['sensor.living_room_tado_temperature']?.state + '°C' || 'N/A'; ]]]",
+              "humidity": "[[[ return states['sensor.living_room_tado_humidity']?.state + '%' || 'N/A'; ]]]"
+            },
+            "styles": {
+              "card": ["height: 80px", "border-radius: 12px", "box-shadow: 0 2px 6px rgba(0,0,0,0.1)"],
+              "name": ["font-size: 11px", "font-weight: bold"],
+              "state": ["font-size: 12px", "color: #FF6900"],
+              "custom_fields": {
+                "temp": ["position: absolute", "top: 5px", "right: 5px", "font-size: 10px", "color: #FF6900", "font-weight: bold"],
+                "humidity": ["position: absolute", "top: 20px", "right: 5px", "font-size: 9px", "color: #2196F3"]
+              }
+            },
+            "tap_action": {"action": "more-info"}
+          },
+          {
+            "type": "custom:button-card",
+            "entity": "climate.kitchen_tado",
+            "name": "Kitchen",
+            "icon": "mdi:chef-hat",
+            "show_state": true,
+            "show_last_changed": false,
+            "custom_fields": {
+              "temp": "[[[ return states['sensor.kitchen_tado_temperature']?.state + '°C' || 'N/A'; ]]]",
+              "humidity": "[[[ return states['sensor.kitchen_tado_humidity']?.state + '%' || 'N/A'; ]]]"
+            },
+            "styles": {
+              "card": ["height: 80px", "border-radius: 12px", "box-shadow: 0 2px 6px rgba(0,0,0,0.1)"],
+              "name": ["font-size: 11px", "font-weight: bold"],
+              "state": ["font-size: 12px", "color: #FF6900"],
+              "custom_fields": {
+                "temp": ["position: absolute", "top: 5px", "right: 5px", "font-size: 10px", "color: #FF6900", "font-weight: bold"],
+                "humidity": ["position: absolute", "top: 20px", "right: 5px", "font-size: 9px", "color: #2196F3"]
+              }
+            },
+            "tap_action": {"action": "more-info"}
+          }
+        ] %}
+        
+        {# Add bedrooms based on configuration #}
+        {% for i in range(1, bedrooms + 1) %}
+          {% set bedroom_icon = "mdi:bed" if i <= 2 else "mdi:bed-outline" %}
+          {% set cards = cards + [{
+            "type": "custom:button-card",
+            "entity": "climate.bedroom_" + i|string + "_tado",
+            "name": "Bedroom " + i|string,
+            "icon": bedroom_icon,
+            "show_state": true,
+            "show_last_changed": false,
+            "custom_fields": {
+              "temp": "[[[ return states['sensor.bedroom_" + i|string + "_tado_temperature']?.state + '°C' || 'N/A'; ]]]",
+              "humidity": "[[[ return states['sensor.bedroom_" + i|string + "_tado_humidity']?.state + '%' || 'N/A'; ]]]"
+            },
+            "styles": {
+              "card": ["height: 80px", "border-radius: 12px", "box-shadow: 0 2px 6px rgba(0,0,0,0.1)"],
+              "name": ["font-size: 11px", "font-weight: bold"],
+              "state": ["font-size: 12px", "color: #FF6900"],
+              "custom_fields": {
+                "temp": ["position: absolute", "top: 5px", "right: 5px", "font-size: 10px", "color: #FF6900", "font-weight: bold"],
+                "humidity": ["position: absolute", "top: 20px", "right: 5px", "font-size: 9px", "color: #2196F3"]
+              }
+            },
+            "tap_action": {"action": "more-info"}
+          }] %}
+        {% endfor %}
+        
+        {# Add garage if enabled #}
+        {% if has_garage %}
+          {% set cards = cards + [{
+            "type": "custom:button-card",
+            "entity": "climate.garage_tado",
+            "name": "Garage",
+            "icon": "mdi:garage",
+            "show_state": true,
+            "show_last_changed": false,
+            "custom_fields": {
+              "temp": "[[[ return states['sensor.garage_tado_temperature']?.state + '°C' || 'N/A'; ]]]",
+              "humidity": "[[[ return states['sensor.garage_tado_humidity']?.state + '%' || 'N/A'; ]]]"
+            },
+            "styles": {
+              "card": ["height: 80px", "border-radius: 12px", "box-shadow: 0 2px 6px rgba(0,0,0,0.1)"],
+              "name": ["font-size: 11px", "font-weight: bold"],
+              "state": ["font-size: 12px", "color: #FF6900"],
+              "custom_fields": {
+                "temp": ["position: absolute", "top: 5px", "right: 5px", "font-size: 10px", "color: #FF6900", "font-weight: bold"],
+                "humidity": ["position: absolute", "top: 20px", "right: 5px", "font-size: 9px", "color: #2196F3"]
+              }
+            },
+            "tap_action": {"action": "more-info"}
+          }] %}
+        {% endif %}
+        
+        {# Add loft if enabled #}
+        {% if has_loft %}
+          {% set cards = cards + [{
+            "type": "custom:button-card",
+            "entity": "climate.loft_tado",
+            "name": "Loft",
+            "icon": "mdi:home-roof",
+            "show_state": true,
+            "show_last_changed": false,
+            "custom_fields": {
+              "temp": "[[[ return states['sensor.loft_tado_temperature']?.state + '°C' || 'N/A'; ]]]",
+              "humidity": "[[[ return states['sensor.loft_tado_humidity']?.state + '%' || 'N/A'; ]]]"
+            },
+            "styles": {
+              "card": ["height: 80px", "border-radius: 12px", "box-shadow: 0 2px 6px rgba(0,0,0,0.1)"],
+              "name": ["font-size: 11px", "font-weight: bold"],
+              "state": ["font-size: 12px", "color: #FF6900"],
+              "custom_fields": {
+                "temp": ["position: absolute", "top: 5px", "right: 5px", "font-size: 10px", "color: #FF6900", "font-weight: bold"],
+                "humidity": ["position: absolute", "top: 20px", "right: 5px", "font-size: 9px", "color: #2196F3"]
+              }
+            },
+            "tap_action": {"action": "more-info"}
+          }] %}
+        {% endif %}
+        
+        {{ cards }}

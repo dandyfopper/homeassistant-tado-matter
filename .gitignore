@@ -1,0 +1,58 @@
+# Home Assistant specific
+secrets.yaml
+known_devices.yaml
+*.log
+*.db
+*.db-shm
+*.db-wal
+.storage/
+.cloud/
+.google.token
+.uuid
+*.pyc
+*/__pycache__/
+
+# OS specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.history/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+*.backup
+*.bak
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+*.tgz
+*.tar.gz
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Custom - User specific files that shouldn't be committed
+# (Users should copy and customize these)
+secrets.yaml.example
+customize.yaml.local

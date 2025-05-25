@@ -1,0 +1,147 @@
+# Scripts for Tado Smart Thermostats
+
+# Script to set all thermostats to eco mode
+set_all_tado_eco:
+  alias: "Set All Tado to Eco Mode"
+  icon: mdi:leaf
+  sequence:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.living_room_tado
+          - climate.bedroom_tado
+          - climate.kitchen_tado
+          - climate.office_tado
+      data:
+        temperature: 16
+    - service: notify.persistent_notification
+      data:
+        title: "Eco Mode Activated"
+        message: "All Tado thermostats set to eco mode (16°C)"
+
+# Script to set all thermostats to comfort mode
+set_all_tado_comfort:
+  alias: "Set All Tado to Comfort Mode"
+  icon: mdi:home-heart
+  sequence:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.living_room_tado
+          - climate.bedroom_tado
+          - climate.kitchen_tado
+          - climate.office_tado
+      data:
+        temperature: 21
+    - service: notify.persistent_notification
+      data:
+        title: "Comfort Mode Activated"
+        message: "All Tado thermostats set to comfort mode (21°C)"
+
+# Script to turn off all heating
+turn_off_all_heating:
+  alias: "Turn Off All Heating"
+  icon: mdi:radiator-off
+  sequence:
+    - service: climate.turn_off
+      target:
+        entity_id:
+          - climate.living_room_tado
+          - climate.bedroom_tado
+          - climate.kitchen_tado
+          - climate.office_tado
+    - service: notify.persistent_notification
+      data:
+        title: "Heating Turned Off"
+        message: "All Tado thermostats have been turned off"
+
+# Script for vacation mode
+set_vacation_mode:
+  alias: "Set Vacation Mode"
+  icon: mdi:airplane
+  sequence:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.living_room_tado
+          - climate.bedroom_tado
+          - climate.kitchen_tado
+          - climate.office_tado
+      data:
+        temperature: 12
+    - service: notify.persistent_notification
+      data:
+        title: "Vacation Mode Activated"
+        message: "All Tado thermostats set to vacation mode (12°C)"
+
+# Script to boost heating in specific room
+boost_room_heating:
+  alias: "Boost Room Heating"
+  icon: mdi:fire
+  fields:
+    room:
+      description: "The room to boost heating in"
+      example: "living_room_tado"
+    temperature:
+      description: "Target temperature"
+      example: "25"
+  sequence:
+    - service: climate.set_temperature
+      target:
+        entity_id: "climate.{{ room }}"
+      data:
+        temperature: "{{ temperature | int }}"
+    - delay:
+        hours: 2
+    - service: climate.set_temperature
+      target:
+        entity_id: "climate.{{ room }}"
+      data:
+        temperature: 21
+
+# Script for party mode (warm up living areas)
+set_party_mode:
+  alias: "Set Party Mode"
+  icon: mdi:party-popper
+  sequence:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.living_room_tado
+          - climate.kitchen_tado
+      data:
+        temperature: 23
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.bedroom_tado
+          - climate.office_tado
+      data:
+        temperature: 18
+    - service: notify.persistent_notification
+      data:
+        title: "Party Mode Activated"
+        message: "Living areas warmed up for party mode!"
+
+# Script to set sleep mode
+set_sleep_mode:
+  alias: "Set Sleep Mode"
+  icon: mdi:sleep
+  sequence:
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.bedroom_tado
+      data:
+        temperature: 18
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.living_room_tado
+          - climate.kitchen_tado
+          - climate.office_tado
+      data:
+        temperature: 16
+    - service: notify.persistent_notification
+      data:
+        title: "Sleep Mode Activated"
+        message: "Heating adjusted for nighttime comfort"

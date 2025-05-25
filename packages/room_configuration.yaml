@@ -1,0 +1,295 @@
+# Input helpers for dynamic room configuration
+input_number:
+  tado_number_of_bedrooms:
+    name: "Number of Bedrooms"
+    min: 1
+    max: 6
+    step: 1
+    initial: 4
+    icon: mdi:bed
+
+input_boolean:
+  tado_has_garage:
+    name: "Has Garage"
+    initial: true
+    icon: mdi:garage
+
+  tado_has_loft:
+    name: "Has Loft"
+    initial: true
+    icon: mdi:home-roof
+
+  tado_show_room_labels:
+    name: "Show Room Labels"
+    initial: true
+    icon: mdi:label
+
+# Room layout presets
+input_select:
+  tado_room_layout_preset:
+    name: "Room Layout Preset"
+    options:
+      - "Custom"
+      - "Studio Apartment (1 bedroom, no garage, no loft)"
+      - "Small House (2 bedrooms, garage, no loft)"
+      - "Family Home (3 bedrooms, garage, loft)"
+      - "Large Family Home (4 bedrooms, garage, loft)"
+      - "Executive Home (5 bedrooms, garage, loft)"
+      - "Manor House (6 bedrooms, garage, loft)"
+    initial: "Large Family Home (4 bedrooms, garage, loft)"
+    icon: mdi:home-city
+
+# Template sensor for room configuration
+template:
+  - sensor:
+      - name: "Active Rooms Configuration"
+        unique_id: "active_rooms_config"
+        state: >
+          {% set bedrooms = states('input_number.tado_number_of_bedrooms') | int %}
+          {% set has_garage = is_state('input_boolean.tado_has_garage', 'on') %}
+          {% set has_loft = is_state('input_boolean.tado_has_loft', 'on') %}
+          {{ bedrooms }}_bedrooms_{{ 'garage' if has_garage else 'no_garage' }}_{{ 'loft' if has_loft else 'no_loft' }}
+        attributes:
+          bedrooms: "{{ states('input_number.tado_number_of_bedrooms') | int }}"
+          has_garage: "{{ is_state('input_boolean.tado_has_garage', 'on') }}"
+          has_loft: "{{ is_state('input_boolean.tado_has_loft', 'on') }}"
+          total_rooms: >
+            {% set bedrooms = states('input_number.tado_number_of_bedrooms') | int %}
+            {% set has_garage = is_state('input_boolean.tado_has_garage', 'on') %}
+            {% set has_loft = is_state('input_boolean.tado_has_loft', 'on') %}
+            {{ 3 + bedrooms + (1 if has_garage else 0) + (1 if has_loft else 0) }}
+          room_list: >
+            {% set bedrooms = states('input_number.tado_number_of_bedrooms') | int %}
+            {% set has_garage = is_state('input_boolean.tado_has_garage', 'on') %}
+            {% set has_loft = is_state('input_boolean.tado_has_loft', 'on') %}
+            {% set rooms = ['living_room', 'kitchen', 'bathroom'] %}
+            {% for i in range(1, bedrooms + 1) %}
+              {% set rooms = rooms + ['bedroom_' + i|string] %}
+            {% endfor %}
+            {% if has_garage %}
+              {% set rooms = rooms + ['garage'] %}
+            {% endif %}
+            {% if has_loft %}
+              {% set rooms = rooms + ['loft'] %}
+            {% endif %}
+            {{ rooms | join(', ') }}
+          room_descriptions: >
+            {% set bedrooms = states('input_number.tado_number_of_bedrooms') | int %}
+            {% set has_garage = is_state('input_boolean.tado_has_garage', 'on') %}
+            {% set has_loft = is_state('input_boolean.tado_has_loft', 'on') %}
+            {% set total = 3 + bedrooms + (1 if has_garage else 0) + (1 if has_loft else 0) %}
+            This layout includes {{ bedrooms }} bedroom{{ 's' if bedrooms != 1 else '' }}, plus living room, kitchen, and bathroom{{ ', with garage' if has_garage else '' }}{{ ', and loft space' if has_loft else '' }}. Total: {{ total }} controllable zones.
+
+      - name: "Room Configuration Summary"
+        unique_id: "room_config_summary"
+        state: >
+          {% set bedrooms = states('input_number.tado_number_of_bedrooms') | int %}
+          {% set has_garage = is_state('input_boolean.tado_has_garage', 'on') %}
+          {% set has_loft = is_state('input_boolean.tado_has_loft', 'on') %}
+          {% if bedrooms == 1 and not has_garage and not has_loft %}
+            Studio/Small Apartment
+          {% elif bedrooms == 2 and has_garage and not has_loft %}
+            Small House
+          {% elif bedrooms == 3 and has_garage and has_loft %}
+            Family Home
+          {% elif bedrooms == 4 and has_garage and has_loft %}
+            Large Family Home
+          {% elif bedrooms == 5 and has_garage and has_loft %}
+            Executive Home
+          {% elif bedrooms == 6 and has_garage and has_loft %}
+            Manor House
+          {% else %}
+            Custom Layout
+          {% endif %}
+
+# Dynamic groups based on room configuration
+group:
+  tado_all_climate_devices:
+    name: "All Tado Climate Devices"
+    icon: mdi:radiator
+    entities: >
+      {% set bedrooms = states('input_number.tado_number_of_bedrooms') | int %}
+      {% set has_garage = is_state('input_boolean.tado_has_garage', 'on') %}
+      {% set has_loft = is_state('input_boolean.tado_has_loft', 'on') %}
+      {% set entities = ['climate.living_room_tado', 'climate.kitchen_tado'] %}
+      {% for i in range(1, bedrooms + 1) %}
+        {% set entities = entities + ['climate.bedroom_' + i|string + '_tado'] %}
+      {% endfor %}
+      {% if has_garage %}
+        {% set entities = entities + ['climate.garage_tado'] %}
+      {% endif %}
+      {% if has_loft %}
+        {% set entities = entities + ['climate.loft_tado'] %}
+      {% endif %}
+      {{ entities }}
+
+  tado_all_temperature_sensors:
+    name: "All Tado Temperature Sensors"
+    icon: mdi:thermometer
+    entities: >
+      {% set bedrooms = states('input_number.tado_number_of_bedrooms') | int %}
+      {% set has_garage = is_state('input_boolean.tado_has_garage', 'on') %}
+      {% set has_loft = is_state('input_boolean.tado_has_loft', 'on') %}
+      {% set entities = ['sensor.living_room_tado_temperature', 'sensor.kitchen_tado_temperature'] %}
+      {% for i in range(1, bedrooms + 1) %}
+        {% set entities = entities + ['sensor.bedroom_' + i|string + '_tado_temperature'] %}
+      {% endfor %}
+      {% if has_garage %}
+        {% set entities = entities + ['sensor.garage_tado_temperature'] %}
+      {% endif %}
+      {% if has_loft %}
+        {% set entities = entities + ['sensor.loft_tado_temperature'] %}
+      {% endif %}
+      {{ entities }}
+
+  tado_bedroom_climate_devices:
+    name: "Bedroom Climate Devices"
+    icon: mdi:bed
+    entities: >
+      {% set bedrooms = states('input_number.tado_number_of_bedrooms') | int %}
+      {% set entities = [] %}
+      {% for i in range(1, bedrooms + 1) %}
+        {% set entities = entities + ['climate.bedroom_' + i|string + '_tado'] %}
+      {% endfor %}
+      {{ entities }}
+
+  tado_common_area_climate_devices:
+    name: "Common Area Climate Devices" 
+    icon: mdi:sofa
+    entities: 
+      - climate.living_room_tado
+      - climate.kitchen_tado
+
+# Automation to apply room layout presets
+automation:
+  - id: apply_room_layout_preset
+    alias: "Apply Room Layout Preset"
+    description: "Automatically configure room layout when preset is selected"
+    trigger:
+      - platform: state
+        entity_id: input_select.tado_room_layout_preset
+    condition:
+      - condition: template
+        value_template: "{{ trigger.to_state.state != 'Custom' }}"
+    action:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_room_layout_preset
+                state: "Studio Apartment (1 bedroom, no garage, no loft)"
+            sequence:
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.tado_number_of_bedrooms
+                data:
+                  value: 1
+              - service: input_boolean.turn_off
+                target:
+                  entity_id: input_boolean.tado_has_garage
+              - service: input_boolean.turn_off
+                target:
+                  entity_id: input_boolean.tado_has_loft
+
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_room_layout_preset
+                state: "Small House (2 bedrooms, garage, no loft)"
+            sequence:
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.tado_number_of_bedrooms
+                data:
+                  value: 2
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.tado_has_garage
+              - service: input_boolean.turn_off
+                target:
+                  entity_id: input_boolean.tado_has_loft
+
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_room_layout_preset
+                state: "Family Home (3 bedrooms, garage, loft)"
+            sequence:
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.tado_number_of_bedrooms
+                data:
+                  value: 3
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.tado_has_garage
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.tado_has_loft
+
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_room_layout_preset
+                state: "Large Family Home (4 bedrooms, garage, loft)"
+            sequence:
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.tado_number_of_bedrooms
+                data:
+                  value: 4
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.tado_has_garage
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.tado_has_loft
+
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_room_layout_preset
+                state: "Executive Home (5 bedrooms, garage, loft)"
+            sequence:
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.tado_number_of_bedrooms
+                data:
+                  value: 5
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.tado_has_garage
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.tado_has_loft
+
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_room_layout_preset
+                state: "Manor House (6 bedrooms, garage, loft)"
+            sequence:
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.tado_number_of_bedrooms
+                data:
+                  value: 6
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.tado_has_garage
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.tado_has_loft
+
+  - id: detect_custom_room_layout
+    alias: "Detect Custom Room Layout"
+    description: "Set preset to Custom when manual changes are made"
+    trigger:
+      - platform: state
+        entity_id: 
+          - input_number.tado_number_of_bedrooms
+          - input_boolean.tado_has_garage
+          - input_boolean.tado_has_loft
+    condition:
+      - condition: template
+        value_template: "{{ states('input_select.tado_room_layout_preset') != 'Custom' }}"
+    action:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.tado_room_layout_preset
+        data:
+          option: "Custom"

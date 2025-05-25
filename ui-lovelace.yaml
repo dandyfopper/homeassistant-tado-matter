@@ -1,0 +1,4 @@
+# Lovelace UI configuration for Tado dashboard
+title: Tado Smart Home
+views:
+  - !include dashboards/tado-home.yaml
