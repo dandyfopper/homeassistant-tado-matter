@@ -5,17 +5,30 @@
 [![Tado](https://img.shields.io/badge/Tado-Smart%20Thermostat-orange.svg)](https://www.tado.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A comprehensive Home Assistant integration for **Tado Smart Radiator Thermostat X** and **Tado Wireless Smart Thermostat X** devices connected via the **Matter protocol**. Features dynamic room configuration, beautiful dashboards, and intelligent automation.
+A comprehensive Home Assistant integration for **Tado Smart Radiator Thermostat X** and **Tado Wireless Smart Thermostat X** devices connected via the **Matter protocol**. Features a stunning infographic dashboard, dynamic room configuration, and intelligent automation.
 
 ## ✨ Features
 
-- 🎨 **Beautiful Tado-themed Dashboard** with interactive house layout
+- 🎨 **Professional Infographic Dashboard** with glassmorphism design and interactive house layout
+- 📊 **Real-time Data Visualization** with charts, metrics, and temperature overlays  
 - 🏠 **Dynamic Room Configuration** supporting 1-6 bedrooms + garage/loft
 - 📱 **Responsive Design** optimized for desktop, tablet, and mobile
 - 🤖 **Intelligent Automations** for presence, scheduling, and energy saving
-- 📊 **Real-time Monitoring** with temperature/humidity graphs
+- 📈 **Analytics Dashboard** with temperature trends and energy usage
 - 🎛️ **Quick Control Scripts** for different heating modes
 - 🏗️ **Modular Architecture** for easy customization
+
+## 🎨 Infographic Dashboard
+
+The centerpiece of this integration is a **professional infographic dashboard** that provides:
+
+- **Visual House Layout**: Interactive SVG showing all rooms with real-time temperature overlays
+- **Glassmorphism Design**: Modern UI with translucent cards and smooth animations  
+- **Live Metrics**: Energy savings, comfort scores, and system status at a glance
+- **Advanced Analytics**: Charts showing temperature trends, energy usage, and comfort history
+- **Smart Controls**: Quick access to heating modes and room-specific settings
+
+See [INFOGRAPHIC_INSTALLATION.md](INFOGRAPHIC_INSTALLATION.md) for setup instructions.
 
 ## 🚀 Quick Start
 

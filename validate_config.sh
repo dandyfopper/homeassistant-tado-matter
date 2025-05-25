@@ -51,12 +51,12 @@ echo ""
 echo "📄 Checking required files..."
 check_file "packages/tado.yaml"
 check_file "packages/room_configuration.yaml"
-check_file "dashboards/tado-home.yaml"
+check_file "packages/tado_demo_data.yaml"
+check_file "dashboards/tado-infographic-enhanced.yaml"
 check_file "themes/tado_theme.yaml"
-check_file "www/house-layout.svg"
-check_file "www/house-layout-dynamic.svg"
-check_file "www/room-layout-mini.svg"
-check_file "www/tado-dashboard.css"
+check_file "www/house-layout-infographic.svg"
+check_file "www/tado-infographic.css"
+check_file "www/tado-infographic.js"
 check_file "automations.yaml"
 check_file "scripts.yaml"
 
@@ -90,11 +90,12 @@ fi
 
 echo ""
 echo "📊 Checking dashboard configuration..."
-if [ -f "dashboards/tado-home.yaml" ]; then
-    check_config "dashboards/tado-home.yaml" "custom:button-card"
-    check_config "dashboards/tado-home.yaml" "custom:auto-entities"
-    check_config "dashboards/tado-home.yaml" "input_select.tado_room_layout_preset"
-    check_config "dashboards/tado-home.yaml" "sensor.room_configuration_summary"
+if [ -f "dashboards/tado-infographic-enhanced.yaml" ]; then
+    check_config "dashboards/tado-infographic-enhanced.yaml" "custom:button-card"
+    check_config "dashboards/tado-infographic-enhanced.yaml" "picture-elements"
+    check_config "dashboards/tado-infographic-enhanced.yaml" "/local/house-layout-infographic.svg"
+    check_config "dashboards/tado-infographic-enhanced.yaml" "/local/tado-infographic.css"
+    check_config "dashboards/tado-infographic-enhanced.yaml" "/local/tado-infographic.js"
 fi
 
 echo ""

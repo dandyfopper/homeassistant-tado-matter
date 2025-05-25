@@ -90,7 +90,7 @@ sensor.tado_wireless_smart_thermostat_x_[room]_humidity
 
 **Files to Update:**
 - `packages/tado.yaml`
-- `dashboards/tado-home.yaml`
+- `dashboards/tado-infographic-enhanced.yaml`
 - `automations.yaml`
 - `scripts.yaml`
 
@@ -99,33 +99,33 @@ sensor.tado_wireless_smart_thermostat_x_[room]_humidity
 There are several ways to add the Tado dashboard:
 
 #### Method 1: YAML Dashboard (Recommended)
-1. Copy `dashboards/tado-home.yaml` to your Home Assistant `/config/dashboards/` directory
+1. Copy `dashboards/tado-infographic-enhanced.yaml` to your Home Assistant `/config/dashboards/` directory
 2. Add this to your `configuration.yaml`:
    ```yaml
    lovelace:
      mode: storage
      dashboards:
-       tado-home:
+       tado-infographic:
          mode: yaml
-         title: Tado Smart Home
-         icon: mdi:home-thermometer
-         filename: dashboards/tado-home.yaml
+         title: Tado Smart Home Infographic
+         icon: mdi:home-analytics
+         filename: dashboards/tado-infographic-enhanced.yaml
    ```
 3. Restart Home Assistant
-4. The dashboard will appear in your sidebar as "Tado Smart Home"
+4. The dashboard will appear in your sidebar as "Tado Smart Home Infographic"
 
 #### Method 2: Manual Dashboard Creation
 1. Go to **Settings** → **Dashboards**
 2. Click **"+ Add Dashboard"**
 3. Choose **"New dashboard from scratch"**
 4. Enter:
-   - **Title**: `Tado Smart Home`
-   - **Icon**: `mdi:home-thermometer`
-   - **URL**: `tado-home`
+   - **Title**: `Tado Smart Home Infographic`
+   - **Icon**: `mdi:home-analytics`
+   - **URL**: `tado-infographic`
 5. Click **"Create"**
 6. Click the **three dots (⋮)** → **"Edit Dashboard"**
 7. Click the **three dots (⋮)** again → **"Raw configuration editor"**
-8. Copy and paste the entire contents of `dashboards/tado-home.yaml`
+8. Copy and paste the entire contents of `dashboards/tado-infographic-enhanced.yaml`
 9. Click **"Save"**
 
 #### Method 3: Using existing Overview dashboard
@@ -133,17 +133,17 @@ There are several ways to add the Tado dashboard:
 2. Click the **three dots (⋮)** → **"Edit Dashboard"**
 3. You'll see **"Take control"** button - click it
 4. This converts Overview to YAML mode
-5. Add the Tado cards from `dashboards/tado-home.yaml` to your overview
+5. Add the Tado cards from `dashboards/tado-infographic-enhanced.yaml` to your overview
 
 #### Method 4: Copy to ui-lovelace.yaml (Legacy)
 If you're using YAML mode for your main dashboard:
-1. Copy the contents of `dashboards/tado-home.yaml`
+1. Copy the contents of `dashboards/tado-infographic-enhanced.yaml`
 2. Add them to your `ui-lovelace.yaml` file
 3. Restart Home Assistant
 
 ### 7. Customize House Layout
 
-Edit `www/house-layout.svg` to match your home:
+Edit `www/house-layout-infographic.svg` to match your home:
 - Adjust room positions and sizes
 - Add/remove rooms as needed
 - Update room labels
@@ -202,19 +202,22 @@ This setup includes a revolutionary **dynamic room configuration system** that a
 
 ```
 /config/
-├── configuration.yaml          # Main HA config with Tado integration
+├── configuration.yaml              # Main HA config with Tado integration
 ├── packages/
-│   └── tado.yaml              # Complete Tado package configuration
+│   ├── tado.yaml                  # Complete Tado package configuration
+│   ├── tado_demo_data.yaml        # Demo data for testing
+│   └── room_configuration.yaml    # Dynamic room configuration
 ├── themes/
-│   └── tado_theme.yaml        # Custom Tado theme
+│   └── tado_theme.yaml            # Custom Tado theme
 ├── dashboards/
-│   └── tado-home.yaml         # Main dashboard configuration
+│   └── tado-infographic-enhanced.yaml  # Main infographic dashboard
 ├── www/
-│   ├── house-layout.svg       # Interactive house layout
-│   └── tado-dashboard.css     # Custom dashboard styling
-├── automations.yaml           # Tado-specific automations
-├── scripts.yaml              # Tado control scripts
-└── ui-lovelace.yaml          # Dashboard configuration
+│   ├── house-layout-infographic.svg    # Interactive house layout
+│   ├── tado-infographic.css           # Custom dashboard styling
+│   └── tado-infographic.js            # Dashboard interactions
+├── automations.yaml               # Tado-specific automations
+├── scripts.yaml                  # Tado control scripts
+└── ui-lovelace.yaml              # Dashboard configuration
 ```
 
 ## 🎨 Customization Guide

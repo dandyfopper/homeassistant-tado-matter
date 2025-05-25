@@ -1,4 +1,9 @@
 # Lovelace UI configuration for Tado dashboard
-title: Tado Smart Home
-views:
-  - !include dashboards/tado-home.yaml
+title: Tado Smart Home Infographic
+dashboards:
+  tado-infographic:
+    mode: yaml
+    filename: dashboards/tado-infographic-enhanced.yaml
+    title: Tado Smart Home
+    icon: mdi:home-thermometer
+    show_in_sidebar: true
