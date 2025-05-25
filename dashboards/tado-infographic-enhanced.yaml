@@ -1,0 +1,614 @@
+# Enhanced Tado Infographic Dashboard
+# Professional infographic-style dashboard with comprehensive data visualization
+
+title: Tado Smart Home Infographic
+theme: tado_theme
+icon: mdi:home-analytics
+background: "center / cover no-repeat linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+path: tado-infographic-enhanced
+
+views:
+  - title: Smart Home Overview
+    path: home
+    icon: mdi:home-analytics
+    panel: true
+    cards:
+      # Main infographic container
+      - type: vertical-stack
+        cards:
+          # Header section with key metrics
+          - type: horizontal-stack
+            cards:
+              # Total Energy Savings Card
+              - type: custom:button-card
+                name: "Energy Savings"
+                icon: mdi:leaf
+                entity: sensor.tado_energy_savings_today
+                show_state: true
+                show_name: true
+                styles:
+                  card:
+                    - background: "linear-gradient(135deg, #4CAF50, #81C784)"
+                    - color: white
+                    - border-radius: 15px
+                    - box-shadow: "0 4px 20px rgba(76, 175, 80, 0.3)"
+                    - height: 100px
+                  name:
+                    - font-size: 14px
+                    - font-weight: bold
+                  state:
+                    - font-size: 24px
+                    - font-weight: bold
+                custom_fields:
+                  units: |
+                    [[[
+                      return '<div style="font-size: 12px; opacity: 0.9;">kWh saved today</div>';
+                    ]]]
+
+              # Average Temperature Card
+              - type: custom:button-card
+                name: "Average Temp"
+                icon: mdi:thermometer
+                entity: sensor.tado_average_temperature
+                show_state: true
+                show_name: true
+                styles:
+                  card:
+                    - background: "linear-gradient(135deg, #FF9800, #FFB74D)"
+                    - color: white
+                    - border-radius: 15px
+                    - box-shadow: "0 4px 20px rgba(255, 152, 0, 0.3)"
+                    - height: 100px
+                  name:
+                    - font-size: 14px
+                    - font-weight: bold
+                  state:
+                    - font-size: 24px
+                    - font-weight: bold
+                custom_fields:
+                  units: |
+                    [[[
+                      return '<div style="font-size: 12px; opacity: 0.9;">°C average</div>';
+                    ]]]
+
+              # Active Devices Card
+              - type: custom:button-card
+                name: "Active Devices"
+                icon: mdi:radiator
+                entity: sensor.tado_active_devices
+                show_state: true
+                show_name: true
+                styles:
+                  card:
+                    - background: "linear-gradient(135deg, #2196F3, #64B5F6)"
+                    - color: white
+                    - border-radius: 15px
+                    - box-shadow: "0 4px 20px rgba(33, 150, 243, 0.3)"
+                    - height: 100px
+                  name:
+                    - font-size: 14px
+                    - font-weight: bold
+                  state:
+                    - font-size: 24px
+                    - font-weight: bold
+                custom_fields:
+                  units: |
+                    [[[
+                      return '<div style="font-size: 12px; opacity: 0.9;">devices heating</div>';
+                    ]]]
+
+              # Comfort Score Card
+              - type: custom:button-card
+                name: "Comfort Score"
+                icon: mdi:emoticon-happy
+                entity: sensor.tado_comfort_score
+                show_state: true
+                show_name: true
+                styles:
+                  card:
+                    - background: "linear-gradient(135deg, #9C27B0, #BA68C8)"
+                    - color: white
+                    - border-radius: 15px
+                    - box-shadow: "0 4px 20px rgba(156, 39, 176, 0.3)"
+                    - height: 100px
+                  name:
+                    - font-size: 14px
+                    - font-weight: bold
+                  state:
+                    - font-size: 24px
+                    - font-weight: bold
+                custom_fields:
+                  units: |
+                    [[[
+                      return '<div style="font-size: 12px; opacity: 0.9;">out of 100</div>';
+                    ]]]
+
+          # Main house visualization
+          - type: picture-elements
+            image: /local/house-layout-infographic.svg
+            style: |
+              ha-card {
+                border-radius: 25px;
+                box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+                overflow: hidden;
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                border: 3px solid rgba(255,255,255,0.2);
+                backdrop-filter: blur(10px);
+                margin: 10px 0;
+                min-height: 500px;
+              }
+              /* Include custom infographic styles */
+              @import url("/local/tado-infographic.css");
+            elements:
+              # Living Room - Large primary display
+              - type: custom:button-card
+                entity: climate.living_room_thermostat
+                style:
+                  top: 65%
+                  left: 25%
+                  width: 140px
+                  height: 140px
+                  transform: translate(-50%, -50%)
+                name: ""
+                show_state: false
+                styles:
+                  card:
+                    - background: |
+                        [[[
+                          const temp = entity.attributes.current_temperature || 20;
+                          const target = entity.attributes.temperature || 21;
+                          const diff = Math.abs(temp - target);
+                          if (diff < 0.5) return 'radial-gradient(circle, #4CAF50, #66BB6A)';
+                          if (temp > target) return 'radial-gradient(circle, #FF5722, #FF7043)';
+                          return 'radial-gradient(circle, #2196F3, #42A5F5)';
+                        ]]]
+                    - border-radius: 50%
+                    - border: 5px solid rgba(255,255,255,0.9)
+                    - box-shadow: "0 8px 32px rgba(0,0,0,0.2), 0 0 0 3px rgba(255,255,255,0.1)"
+                    - color: white
+                    - position: relative
+                custom_fields:
+                  temp_display: |
+                    [[[
+                      const current = entity.attributes.current_temperature || 'N/A';
+                      const target = entity.attributes.temperature || 'N/A';
+                      const humidity = entity.attributes.current_humidity || 'N/A';
+                      const mode = entity.state || 'off';
+                      return `
+                        <div style="text-align: center; padding: 15px; position: relative;">
+                          <div style="font-size: 32px; font-weight: 900; margin-bottom: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">${current}°</div>
+                          <div style="font-size: 14px; opacity: 0.95; margin-bottom: 5px;">→ ${target}°C</div>
+                          <div style="font-size: 11px; opacity: 0.9; margin-bottom: 3px;">${humidity}% humidity</div>
+                          <div style="font-size: 9px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Living Room</div>
+                          <div style="position: absolute; top: -5px; right: -5px; width: 12px; height: 12px; border-radius: 50%; background: ${mode === 'heat' ? '#FF5722' : mode === 'cool' ? '#2196F3' : '#4CAF50'}; border: 2px solid white;"></div>
+                        </div>
+                      `;
+                    ]]]
+                tap_action:
+                  action: more-info
+
+              # Kitchen - Medium display
+              - type: custom:button-card
+                entity: climate.kitchen_thermostat
+                style:
+                  top: 35%
+                  left: 75%
+                  width: 110px
+                  height: 110px
+                  transform: translate(-50%, -50%)
+                name: ""
+                show_state: false
+                styles:
+                  card:
+                    - background: |
+                        [[[
+                          const temp = entity.attributes.current_temperature || 20;
+                          const target = entity.attributes.temperature || 21;
+                          const diff = Math.abs(temp - target);
+                          if (diff < 0.5) return 'radial-gradient(circle, #4CAF50, #66BB6A)';
+                          if (temp > target) return 'radial-gradient(circle, #FF5722, #FF7043)';
+                          return 'radial-gradient(circle, #2196F3, #42A5F5)';
+                        ]]]
+                    - border-radius: 50%
+                    - border: 4px solid rgba(255,255,255,0.9)
+                    - box-shadow: "0 6px 24px rgba(0,0,0,0.2)"
+                    - color: white
+                custom_fields:
+                  temp_display: |
+                    [[[
+                      const current = entity.attributes.current_temperature || 'N/A';
+                      const target = entity.attributes.temperature || 'N/A';
+                      const mode = entity.state || 'off';
+                      return `
+                        <div style="text-align: center; padding: 12px; position: relative;">
+                          <div style="font-size: 26px; font-weight: 900; margin-bottom: 6px;">${current}°</div>
+                          <div style="font-size: 12px; opacity: 0.95;">→ ${target}°</div>
+                          <div style="font-size: 8px; opacity: 0.8; margin-top: 4px; text-transform: uppercase;">Kitchen</div>
+                          <div style="position: absolute; top: -3px; right: -3px; width: 10px; height: 10px; border-radius: 50%; background: ${mode === 'heat' ? '#FF5722' : mode === 'cool' ? '#2196F3' : '#4CAF50'}; border: 2px solid white;"></div>
+                        </div>
+                      `;
+                    ]]]
+                tap_action:
+                  action: more-info
+
+              # Office/Study Room
+              - type: custom:button-card
+                entity: climate.office_thermostat
+                style:
+                  top: 55%
+                  left: 75%
+                  width: 100px
+                  height: 100px
+                  transform: translate(-50%, -50%)
+                name: ""
+                show_state: false
+                styles:
+                  card:
+                    - background: |
+                        [[[
+                          const temp = entity.attributes.current_temperature || 20;
+                          const target = entity.attributes.temperature || 21;
+                          const diff = Math.abs(temp - target);
+                          if (diff < 0.5) return 'radial-gradient(circle, #4CAF50, #66BB6A)';
+                          if (temp > target) return 'radial-gradient(circle, #FF5722, #FF7043)';
+                          return 'radial-gradient(circle, #2196F3, #42A5F5)';
+                        ]]]
+                    - border-radius: 50%
+                    - border: 3px solid rgba(255,255,255,0.9)
+                    - box-shadow: "0 6px 20px rgba(0,0,0,0.15)"
+                    - color: white
+                custom_fields:
+                  temp_display: |
+                    [[[
+                      const current = entity.attributes.current_temperature || 'N/A';
+                      const target = entity.attributes.temperature || 'N/A';
+                      const mode = entity.state || 'off';
+                      return `
+                        <div style="text-align: center; padding: 10px; position: relative;">
+                          <div style="font-size: 22px; font-weight: 900; margin-bottom: 4px;">${current}°</div>
+                          <div style="font-size: 10px; opacity: 0.95;">→ ${target}°</div>
+                          <div style="font-size: 7px; opacity: 0.8; margin-top: 3px; text-transform: uppercase;">Office</div>
+                          <div style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; border-radius: 50%; background: ${mode === 'heat' ? '#FF5722' : mode === 'cool' ? '#2196F3' : '#4CAF50'}; border: 1px solid white;"></div>
+                        </div>
+                      `;
+                    ]]]
+                tap_action:
+                  action: more-info
+
+              # Bedroom 1 (conditional)
+              - type: conditional
+                conditions:
+                  - entity: input_number.tado_number_of_bedrooms
+                    state_not: "0"
+                elements:
+                  - type: custom:button-card
+                    entity: climate.bedroom_1_thermostat
+                    style:
+                      top: 25%
+                      left: 85%
+                      width: 90px
+                      height: 90px
+                      transform: translate(-50%, -50%)
+                    name: ""
+                    show_state: false
+                    styles:
+                      card:
+                        - background: |
+                            [[[
+                              const temp = entity.attributes.current_temperature || 20;
+                              const target = entity.attributes.temperature || 21;
+                              const diff = Math.abs(temp - target);
+                              if (diff < 0.5) return 'radial-gradient(circle, #4CAF50, #66BB6A)';
+                              if (temp > target) return 'radial-gradient(circle, #FF5722, #FF7043)';
+                              return 'radial-gradient(circle, #2196F3, #42A5F5)';
+                            ]]]
+                        - border-radius: 50%
+                        - border: 3px solid rgba(255,255,255,0.9)
+                        - box-shadow: "0 4px 16px rgba(0,0,0,0.15)"
+                        - color: white
+                    custom_fields:
+                      temp_display: |
+                        [[[
+                          const current = entity.attributes.current_temperature || 'N/A';
+                          const target = entity.attributes.temperature || 'N/A';
+                          const mode = entity.state || 'off';
+                          return `
+                            <div style="text-align: center; padding: 8px; position: relative;">
+                              <div style="font-size: 20px; font-weight: 900; margin-bottom: 3px;">${current}°</div>
+                              <div style="font-size: 9px; opacity: 0.95;">→ ${target}°</div>
+                              <div style="font-size: 7px; opacity: 0.8; margin-top: 2px; text-transform: uppercase;">Bedroom 1</div>
+                              <div style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; border-radius: 50%; background: ${mode === 'heat' ? '#FF5722' : mode === 'cool' ? '#2196F3' : '#4CAF50'}; border: 1px solid white;"></div>
+                            </div>
+                          `;
+                        ]]]
+                    tap_action:
+                      action: more-info
+
+              # Temperature Legend
+              - type: custom:button-card
+                style:
+                  top: 5%
+                  left: 5%
+                  width: 200px
+                  height: 80px
+                name: "Temperature Legend"
+                show_state: false
+                styles:
+                  card:
+                    - background: "rgba(255,255,255,0.95)"
+                    - border-radius: 15px
+                    - box-shadow: "0 4px 20px rgba(0,0,0,0.1)"
+                    - color: "#333"
+                    - backdrop-filter: "blur(10px)"
+                custom_fields:
+                  legend: |
+                    [[[
+                      return `
+                        <div style="padding: 10px; font-size: 10px;">
+                          <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: linear-gradient(circle, #4CAF50, #66BB6A); margin-right: 8px;"></div>
+                            <span>Target reached</span>
+                          </div>
+                          <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: linear-gradient(circle, #FF5722, #FF7043); margin-right: 8px;"></div>
+                            <span>Too warm</span>
+                          </div>
+                          <div style="display: flex; align-items: center;">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: linear-gradient(circle, #2196F3, #42A5F5); margin-right: 8px;"></div>
+                            <span>Heating up</span>
+                          </div>
+                        </div>
+                      `;
+                    ]]]
+
+              # Weather info overlay
+              - type: custom:button-card
+                entity: weather.home
+                style:
+                  top: 5%
+                  right: 5%
+                  width: 180px
+                  height: 80px
+                name: ""
+                show_state: false
+                styles:
+                  card:
+                    - background: "rgba(255,255,255,0.95)"
+                    - border-radius: 15px
+                    - box-shadow: "0 4px 20px rgba(0,0,0,0.1)"
+                    - color: "#333"
+                    - backdrop-filter: "blur(10px)"
+                custom_fields:
+                  weather: |
+                    [[[
+                      const temp = entity.attributes.temperature || 'N/A';
+                      const condition = entity.state || 'unknown';
+                      const humidity = entity.attributes.humidity || 'N/A';
+                      return `
+                        <div style="padding: 10px; text-align: center;">
+                          <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">Outside</div>
+                          <div style="font-size: 20px; font-weight: 900; margin-bottom: 3px;">${temp}°C</div>
+                          <div style="font-size: 10px; opacity: 0.8; text-transform: capitalize;">${condition}</div>
+                          <div style="font-size: 9px; opacity: 0.7;">${humidity}% humidity</div>
+                        </div>
+                      `;
+                    ]]]
+                tap_action:
+                  action: more-info
+
+          # Bottom control panel
+          - type: horizontal-stack
+            cards:
+              # Quick Mode Selector
+              - type: custom:button-card
+                name: "Home Mode"
+                entity: input_select.tado_home_mode
+                show_state: true
+                show_name: true
+                styles:
+                  card:
+                    - background: "linear-gradient(135deg, #6A1B9A, #8E24AA)"
+                    - color: white
+                    - border-radius: 15px
+                    - box-shadow: "0 4px 20px rgba(106, 27, 154, 0.3)"
+                    - height: 80px
+                  name:
+                    - font-size: 14px
+                    - font-weight: bold
+                  state:
+                    - font-size: 16px
+                    - font-weight: bold
+                tap_action:
+                  action: more-info
+
+              # Room Configuration
+              - type: custom:button-card
+                name: "Room Layout"
+                entity: input_select.tado_room_layout
+                show_state: true
+                show_name: true
+                styles:
+                  card:
+                    - background: "linear-gradient(135deg, #00796B, #26A69A)"
+                    - color: white
+                    - border-radius: 15px
+                    - box-shadow: "0 4px 20px rgba(0, 121, 107, 0.3)"
+                    - height: 80px
+                  name:
+                    - font-size: 14px
+                    - font-weight: bold
+                  state:
+                    - font-size: 16px
+                    - font-weight: bold
+                tap_action:
+                  action: more-info
+
+              # Energy Efficiency Meter
+              - type: custom:button-card
+                name: "Efficiency"
+                entity: sensor.tado_efficiency_score
+                show_state: true
+                show_name: true
+                icon: mdi:leaf-circle
+                styles:
+                  card:
+                    - background: |
+                        [[[
+                          const score = parseFloat(entity.state) || 0;
+                          if (score >= 80) return 'linear-gradient(135deg, #4CAF50, #66BB6A)';
+                          if (score >= 60) return 'linear-gradient(135deg, #FF9800, #FFB74D)';
+                          return 'linear-gradient(135deg, #F44336, #EF5350)';
+                        ]]]
+                    - color: white
+                    - border-radius: 15px
+                    - box-shadow: "0 4px 20px rgba(76, 175, 80, 0.3)"
+                    - height: 80px
+                  name:
+                    - font-size: 14px
+                    - font-weight: bold
+                  state:
+                    - font-size: 20px
+                    - font-weight: bold
+                custom_fields:
+                  rating: |
+                    [[[
+                      const score = parseFloat(entity.state) || 0;
+                      let rating = 'Poor';
+                      if (score >= 80) rating = 'Excellent';
+                      else if (score >= 60) rating = 'Good';
+                      else if (score >= 40) rating = 'Fair';
+                      return `<div style="font-size: 12px; opacity: 0.9;">${rating}</div>`;
+                    ]]]
+                tap_action:
+                  action: more-info
+
+              # System Status
+              - type: custom:button-card
+                name: "System"
+                entity: binary_sensor.tado_system_online
+                show_name: true
+                show_icon: true
+                icon: |
+                  [[[
+                    return entity.state === 'on' ? 'mdi:check-circle' : 'mdi:alert-circle';
+                  ]]]
+                styles:
+                  card:
+                    - background: |
+                        [[[
+                          return entity.state === 'on' ? 'linear-gradient(135deg, #4CAF50, #66BB6A)' : 'linear-gradient(135deg, #F44336, #EF5350)';
+                        ]]]
+                    - color: white
+                    - border-radius: 15px
+                    - box-shadow: "0 4px 20px rgba(76, 175, 80, 0.3)"
+                    - height: 80px
+                  name:
+                    - font-size: 14px
+                    - font-weight: bold
+                  icon:
+                    - font-size: 24px
+                custom_fields:
+                  status: |
+                    [[[
+                      return entity.state === 'on' ? '<div style="font-size: 12px; opacity: 0.9;">Online</div>' : '<div style="font-size: 12px; opacity: 0.9;">Offline</div>';
+                    ]]]
+                tap_action:
+                  action: more-info
+
+  # Additional views for detailed analytics
+  - title: Analytics
+    path: analytics
+    icon: mdi:chart-line
+    cards:
+      # Temperature trends chart
+      - type: custom:apexcharts-card
+        header:
+          title: "Temperature Trends"
+          show: true
+        graph_span: 24h
+        series:
+          - entity: climate.living_room_thermostat
+            attribute: current_temperature
+            name: "Living Room"
+            color: "#FF5722"
+          - entity: climate.kitchen_thermostat
+            attribute: current_temperature
+            name: "Kitchen"
+            color: "#2196F3"
+          - entity: climate.bedroom_1_thermostat
+            attribute: current_temperature
+            name: "Bedroom 1"
+            color: "#4CAF50"
+          - entity: weather.home
+            attribute: temperature
+            name: "Outside"
+            color: "#FF9800"
+
+      # Energy usage chart
+      - type: custom:apexcharts-card
+        header:
+          title: "Energy Usage"
+          show: true
+        graph_span: 7d
+        series:
+          - entity: sensor.tado_daily_energy_usage
+            name: "Daily Usage"
+            type: column
+            color: "#9C27B0"
+
+      # Comfort score history
+      - type: custom:apexcharts-card
+        header:
+          title: "Comfort Score History"
+          show: true
+        graph_span: 7d
+        series:
+          - entity: sensor.tado_comfort_score
+            name: "Comfort Score"
+            color: "#00BCD4"
+
+  # Settings and controls view
+  - title: Controls
+    path: controls
+    icon: mdi:cog
+    cards:
+      # Mode controls
+      - type: entities
+        title: "System Controls"
+        entities:
+          - input_select.tado_home_mode
+          - input_select.tado_room_layout
+          - input_number.tado_number_of_bedrooms
+          - input_boolean.tado_include_garage
+          - input_boolean.tado_include_loft
+
+      # Individual climate controls
+      - type: thermostat
+        entity: climate.living_room_thermostat
+        name: "Living Room Thermostat"
+
+      - type: thermostat
+        entity: climate.kitchen_thermostat
+        name: "Kitchen Thermostat"
+
+      - type: thermostat
+        entity: climate.bedroom_1_thermostat
+        name: "Bedroom 1 Thermostat"
+
+      # Scripts and automations
+      - type: entities
+        title: "Quick Actions"
+        entities:
+          - script.tado_comfort_mode
+          - script.tado_eco_mode
+          - script.tado_party_mode
+          - script.tado_sleep_mode
+          - script.tado_vacation_mode
+
+      # Custom JavaScript for enhanced functionality
+      - type: markdown
+        content: |
+          <script src="/local/tado-infographic.js"></script>
+          <style>
+            @import url("/local/tado-infographic.css");
+          </style>

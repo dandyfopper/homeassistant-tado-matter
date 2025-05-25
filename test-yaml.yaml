@@ -1,0 +1,50 @@
+# Tado Home Dashboard Configuration
+title: Tado Smart Home
+theme: tado_theme
+icon: mdi:home-thermometer
+background: center / cover no-repeat url("/local/house-background.jpg") fixed
+path: tado-home
+
+cards:
+  # Header card with house overview
+  - type: custom:button-card
+    name: "Smart Home Climate Control"
+    icon: mdi:home-thermometer-outline
+    styles:
+      card:
+        - height: 80px
+        - background: "linear-gradient(135deg, #FF6900 0%, #FF8A50 100%)"
+        - color: white
+        - border-radius: 15px
+        - box-shadow: "0 4px 8px rgba(255, 105, 0, 0.3)"
+      name:
+        - font-size: 24px
+        - font-weight: bold
+      icon:
+        - font-size: 32px
+    tap_action:
+      action: none
+
+  # Room configuration controls
+  - type: horizontal-stack
+    cards:
+      - type: entities
+        title: House Configuration
+        icon: mdi:home-edit
+        show_header_toggle: false
+        entities:
+          - entity: input_select.tado_room_layout_preset
+            name: Layout Preset
+          - type: divider
+          - entity: input_number.tado_number_of_bedrooms
+            name: Number of Bedrooms
+          - entity: input_boolean.tado_has_garage
+            name: Include Garage
+          - entity: input_boolean.tado_has_loft
+            name: Include Loft
+          - type: divider
+          - entity: sensor.room_configuration_summary
+            name: Layout Type
+          - entity: sensor.active_rooms_configuration
+            name: Current Layout
+        style: |
