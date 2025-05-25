@@ -167,6 +167,28 @@ template:
         unit_of_measurement: "%"
         icon: mdi:leaf
 
+      - name: "Available Tado Climate Entities"
+        unique_id: "available_tado_climate_entities"
+        state: >
+          {% set entities = states.climate | selectattr('entity_id', 'search', '(sensor_|radiator_)') | list %}
+          {{ entities | length }}
+        icon: mdi:thermometer-lines
+        attributes:
+          entities: >
+            {% set entities = states.climate | selectattr('entity_id', 'search', '(sensor_|radiator_)') | list %}
+            {{ entities | map(attribute='entity_id') | list }}
+
+      - name: "Available Tado Sensor Entities"  
+        unique_id: "available_tado_sensor_entities"
+        state: >
+          {% set entities = states.sensor | selectattr('entity_id', 'search', '(sensor_|radiator_)') | list %}
+          {{ entities | length }}
+        icon: mdi:sensor
+        attributes:
+          entities: >
+            {% set entities = states.sensor | selectattr('entity_id', 'search', '(sensor_|radiator_)') | list %}
+            {{ entities | map(attribute='entity_id') | list }}
+
 # Input selections for easy control
 input_select:
   tado_home_mode:
@@ -190,6 +212,15 @@ input_select:
       - "Custom"
     initial: "Comfort"
     icon: mdi:thermometer-lines
+
+  tado_device_setup_mode:
+    name: "Device Setup Mode"
+    options:
+      - "Automatic"
+      - "Manual"
+      - "Advanced"
+    initial: "Automatic"
+    icon: mdi:cog
 
 # Input numbers for target temperatures
 input_number:
@@ -396,6 +427,114 @@ script:
               {% endif %}
             {% endfor %}
             {{ valid_entities }}
+
+  tado_reset_configuration:
+    alias: "Reset Tado Configuration"
+    icon: mdi:restart
+    sequence:
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.tado_living_room_entity
+        data:
+          value: "climate.living_room_tado"
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.tado_bedroom_entity
+        data:
+          value: "climate.bedroom_tado"
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.tado_kitchen_entity
+        data:
+          value: "climate.kitchen_tado"
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.tado_office_entity
+        data:
+          value: "climate.office_tado"
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.tado_home_mode
+        data:
+          option: "Home"
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.tado_preset_mode
+        data:
+          option: "Comfort"
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.tado_comfort_temperature
+        data:
+          value: 21
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.tado_eco_temperature
+        data:
+          value: 18
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.tado_boost_temperature
+        data:
+          value: 24
+      - service: notify.persistent_notification
+        data:
+          title: "Configuration Reset"
+          message: "All Tado configuration has been reset to default values"
+
+  tado_auto_discover_entities:
+    alias: "Auto-Discover Tado Entities"
+    icon: mdi:magnify
+    sequence:
+      - service: notify.persistent_notification
+        data:
+          title: "Auto-Discovery Started"
+          message: "Searching for Tado entities with patterns *sensor_* or *radiator_*..."
+      - service: script.turn_on
+        target:
+          entity_id: script.tado_apply_discovered_entities
+
+  tado_apply_discovered_entities:
+    alias: "Apply Auto-Discovered Entities"
+    icon: mdi:check-circle
+    sequence:
+      - variables:
+          climate_entities: >
+            {% set entities = states.climate | selectattr('entity_id', 'search', '(sensor_|radiator_)') | list %}
+            {{ entities | map(attribute='entity_id') | list }}
+      - if:
+          - condition: template
+            value_template: "{{ climate_entities | length > 0 }}"
+        then:
+          - service: input_text.set_value
+            target:
+              entity_id: input_text.tado_living_room_entity
+            data:
+              value: "{{ climate_entities[0] if climate_entities | length > 0 else 'climate.living_room_tado' }}"
+          - service: input_text.set_value
+            target:
+              entity_id: input_text.tado_bedroom_entity
+            data:
+              value: "{{ climate_entities[1] if climate_entities | length > 1 else 'climate.bedroom_tado' }}"
+          - service: input_text.set_value
+            target:
+              entity_id: input_text.tado_kitchen_entity
+            data:
+              value: "{{ climate_entities[2] if climate_entities | length > 2 else 'climate.kitchen_tado' }}"
+          - service: input_text.set_value
+            target:
+              entity_id: input_text.tado_office_entity
+            data:
+              value: "{{ climate_entities[3] if climate_entities | length > 3 else 'climate.office_tado' }}"
+          - service: notify.persistent_notification
+            data:
+              title: "Auto-Discovery Complete"
+              message: "Found {{ climate_entities | length }} Tado entities and applied them to room configuration"
+        else:
+          - service: notify.persistent_notification
+            data:
+              title: "Auto-Discovery Failed"
+              message: "No Tado entities found with patterns *sensor_* or *radiator_*. Please configure manually."
 
 # Groups for easy management
 group:
