@@ -18,6 +18,12 @@ lovelace:
     - url: /hacsfiles/button-card/button-card.js
       type: module
   dashboards:
+    tado-enhanced:
+      mode: yaml
+      title: Tado Smart Home Enhanced
+      icon: mdi:home-analytics
+      show_in_sidebar: true
+      filename: dashboards/tado-dashboard-enhanced.yaml
     tado-infographic:
       mode: yaml
       title: Tado Smart Home

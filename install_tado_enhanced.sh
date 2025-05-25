@@ -504,6 +504,12 @@ frontend:\
 lovelace:\
   mode: storage\
   dashboards:\
+    tado-enhanced:\
+      mode: yaml\
+      title: Tado Smart Home Enhanced\
+      icon: mdi:home-analytics\
+      show_in_sidebar: true\
+      filename: dashboards/tado-dashboard-enhanced.yaml\
     tado-infographic:\
       mode: yaml\
       title: Tado Smart Home\
@@ -517,8 +523,19 @@ lovelace:\
       show_in_sidebar: true\
       filename: dashboards/tado-configuration.yaml\
 ' configuration.yaml
-elif ! grep -q "tado-configuration" configuration.yaml; then
-    # Add tado-configuration dashboard if lovelace exists but dashboard doesn't
+elif ! grep -q "tado-enhanced" configuration.yaml; then
+    # Add main enhanced dashboard if lovelace exists but dashboard doesn't
+    sed -i.bak '/filename: dashboards\/tado-infographic-enhanced.yaml/i\
+    tado-enhanced:\
+      mode: yaml\
+      title: Tado Smart Home Enhanced\
+      icon: mdi:home-analytics\
+      show_in_sidebar: true\
+      filename: dashboards/tado-dashboard-enhanced.yaml' configuration.yaml
+fi
+
+if ! grep -q "tado-configuration" configuration.yaml; then
+    # Add tado-configuration dashboard if it doesn't exist
     sed -i.bak '/filename: dashboards\/tado-infographic-enhanced.yaml/a\
     tado-configuration:\
       mode: yaml\
