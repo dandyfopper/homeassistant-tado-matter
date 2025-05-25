@@ -96,14 +96,50 @@ sensor.tado_wireless_smart_thermostat_x_[room]_humidity
 
 ### 6. Add Dashboard
 
-1. **Method 1: UI Configuration**
-   - Home Assistant → Dashboards → Add Dashboard
-   - Choose "Take Control"
-   - Copy contents from `dashboards/tado-home.yaml`
+There are several ways to add the Tado dashboard:
 
-2. **Method 2: YAML Mode**
-   - Replace `ui-lovelace.yaml` with provided file
-   - Restart Home Assistant
+#### Method 1: YAML Dashboard (Recommended)
+1. Copy `dashboards/tado-home.yaml` to your Home Assistant `/config/dashboards/` directory
+2. Add this to your `configuration.yaml`:
+   ```yaml
+   lovelace:
+     mode: storage
+     dashboards:
+       tado-home:
+         mode: yaml
+         title: Tado Smart Home
+         icon: mdi:home-thermometer
+         filename: dashboards/tado-home.yaml
+   ```
+3. Restart Home Assistant
+4. The dashboard will appear in your sidebar as "Tado Smart Home"
+
+#### Method 2: Manual Dashboard Creation
+1. Go to **Settings** → **Dashboards**
+2. Click **"+ Add Dashboard"**
+3. Choose **"New dashboard from scratch"**
+4. Enter:
+   - **Title**: `Tado Smart Home`
+   - **Icon**: `mdi:home-thermometer`
+   - **URL**: `tado-home`
+5. Click **"Create"**
+6. Click the **three dots (⋮)** → **"Edit Dashboard"**
+7. Click the **three dots (⋮)** again → **"Raw configuration editor"**
+8. Copy and paste the entire contents of `dashboards/tado-home.yaml`
+9. Click **"Save"**
+
+#### Method 3: Using existing Overview dashboard
+1. Go to your **Overview** dashboard
+2. Click the **three dots (⋮)** → **"Edit Dashboard"**
+3. You'll see **"Take control"** button - click it
+4. This converts Overview to YAML mode
+5. Add the Tado cards from `dashboards/tado-home.yaml` to your overview
+
+#### Method 4: Copy to ui-lovelace.yaml (Legacy)
+If you're using YAML mode for your main dashboard:
+1. Copy the contents of `dashboards/tado-home.yaml`
+2. Add them to your `ui-lovelace.yaml` file
+3. Restart Home Assistant
 
 ### 7. Customize House Layout
 

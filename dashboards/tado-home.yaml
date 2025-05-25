@@ -74,6 +74,12 @@ cards:
             - font-weight: bold
           icon:
             - color: "#FF6900"
+          custom_fields:
+            info:
+              - position: absolute
+              - bottom: 10px
+              - left: 50%
+              - transform: translateX(-50%)
         custom_fields:
           mini_layout: |
             [[[
@@ -108,13 +114,6 @@ cards:
                 <span style="color: #FF6900; font-weight: bold;">Total: ${totalRooms} climate zones</span>
               </div>`;
             ]]]
-        styles:
-          custom_fields:
-            info:
-              - position: absolute
-              - bottom: 10px
-              - left: 50%
-              - transform: translateX(-50%)
 
   # Quick layout preset buttons
   - type: horizontal-stack
