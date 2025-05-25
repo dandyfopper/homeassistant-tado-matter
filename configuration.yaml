@@ -11,6 +11,23 @@ matter:
 frontend:
   themes: !include_dir_merge_named themes
 
+# Dashboard configuration for Tado
+lovelace:
+  mode: storage
+  dashboards:
+    tado-infographic:
+      mode: yaml
+      title: Tado Smart Home
+      icon: mdi:home-thermometer
+      show_in_sidebar: true
+      filename: dashboards/tado-infographic-enhanced.yaml
+    tado-configuration:
+      mode: yaml
+      title: Tado Configuration
+      icon: mdi:cog
+      show_in_sidebar: true
+      filename: dashboards/tado-configuration.yaml
+
 # Enable the HTTP component for web interface
 http:
   use_x_forwarded_for: true

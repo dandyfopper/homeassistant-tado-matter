@@ -489,38 +489,43 @@ EOF
 
 print_status "Configuration dashboard created"
 
-# Update main UI configuration to include the new dashboard
+# Update main UI configuration to include the new dashboards
 print_info "Updating dashboard configuration..."
-if [ ! -f "ui-lovelace.yaml" ]; then
-    cat > ui-lovelace.yaml << 'EOF'
-# Lovelace UI configuration for Tado dashboard
-title: Tado Smart Home
-dashboards:
-  tado-infographic:
-    mode: yaml
-    filename: dashboards/tado-infographic-enhanced.yaml
-    title: Tado Smart Home
-    icon: mdi:home-thermometer
-    show_in_sidebar: true
-  tado-configuration:
-    mode: yaml
-    filename: dashboards/tado-configuration.yaml
-    title: Tado Configuration
-    icon: mdi:cog
-    show_in_sidebar: true
-EOF
-else
-    # Add configuration dashboard to existing file if not present
-    if ! grep -q "tado-configuration" ui-lovelace.yaml; then
-        cat >> ui-lovelace.yaml << 'EOF'
-  tado-configuration:
-    mode: yaml
-    filename: dashboards/tado-configuration.yaml
-    title: Tado Configuration
-    icon: mdi:cog
-    show_in_sidebar: true
-EOF
-    fi
+
+# Update configuration.yaml to include dashboard configuration
+if ! grep -q "lovelace:" configuration.yaml 2>/dev/null; then
+    # Add lovelace configuration if it doesn't exist
+    sed -i.bak '/^frontend:$/,/^$/c\
+# Frontend for custom dashboards\
+frontend:\
+  themes: !include_dir_merge_named themes\
+\
+# Dashboard configuration for Tado\
+lovelace:\
+  mode: storage\
+  dashboards:\
+    tado-infographic:\
+      mode: yaml\
+      title: Tado Smart Home\
+      icon: mdi:home-thermometer\
+      show_in_sidebar: true\
+      filename: dashboards/tado-infographic-enhanced.yaml\
+    tado-configuration:\
+      mode: yaml\
+      title: Tado Configuration\
+      icon: mdi:cog\
+      show_in_sidebar: true\
+      filename: dashboards/tado-configuration.yaml\
+' configuration.yaml
+elif ! grep -q "tado-configuration" configuration.yaml; then
+    # Add tado-configuration dashboard if lovelace exists but dashboard doesn't
+    sed -i.bak '/filename: dashboards\/tado-infographic-enhanced.yaml/a\
+    tado-configuration:\
+      mode: yaml\
+      title: Tado Configuration\
+      icon: mdi:cog\
+      show_in_sidebar: true\
+      filename: dashboards/tado-configuration.yaml' configuration.yaml
 fi
 
 print_status "Dashboard configuration updated"
