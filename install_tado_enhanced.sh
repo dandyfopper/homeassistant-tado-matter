@@ -130,9 +130,9 @@ check_ha_cli_available() {
 
 # Note: Entity discovery happens after Home Assistant restart
 # The template sensors in the device discovery package will automatically
-# detect Tado entities once Home Assistant is running
+# detect Tado entities with patterns like *sensor_* or *radiator_* once Home Assistant is running
 print_info "Entity discovery will happen automatically after Home Assistant restart"
-print_info "The system uses template sensors to discover Tado entities dynamically"
+print_info "The system uses template sensors to discover Tado entities with 'sensor_' or 'radiator_' patterns"
 
 # Download or copy configuration files
 print_info "Installing Tado configuration files..."

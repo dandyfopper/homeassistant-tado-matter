@@ -1,0 +1,60 @@
+# Test file to validate the updated entity discovery patterns
+# This simulates what the template sensors will do in Home Assistant
+
+template:
+  - sensor:
+      - name: "Test Tado Climate Discovery"
+        unique_id: "test_tado_climate_discovery"
+        state: >
+          {% set test_entities = [
+            'climate.sensor_1',
+            'climate.radiator_2', 
+            'climate.living_room_sensor_3',
+            'climate.bedroom_radiator_4',
+            'climate.old_tado_device',
+            'climate.generic_thermostat'
+          ] %}
+          {% set tado_entities = test_entities | select('search', '(sensor_|radiator_)') | list %}
+          {{ tado_entities | length }}
+        attributes:
+          entities: >
+            {% set test_entities = [
+              'climate.sensor_1',
+              'climate.radiator_2', 
+              'climate.living_room_sensor_3',
+              'climate.bedroom_radiator_4',
+              'climate.old_tado_device',
+              'climate.generic_thermostat'
+            ] %}
+            {% set tado_entities = test_entities | select('search', '(sensor_|radiator_)') | list %}
+            {{ tado_entities }}
+          expected_result: >
+            Should find: sensor_1, radiator_2, living_room_sensor_3, bedroom_radiator_4
+            Should NOT find: old_tado_device, generic_thermostat
+
+      - name: "Test Tado Sensor Discovery"  
+        unique_id: "test_tado_sensor_discovery"
+        state: >
+          {% set test_entities = [
+            'sensor.temperature_sensor_1',
+            'sensor.humidity_radiator_2',
+            'sensor.battery_sensor_3', 
+            'sensor.old_tado_temp',
+            'sensor.generic_temperature'
+          ] %}
+          {% set tado_entities = test_entities | select('search', '(sensor_|radiator_)') | list %}
+          {{ tado_entities | length }}
+        attributes:
+          entities: >
+            {% set test_entities = [
+              'sensor.temperature_sensor_1',
+              'sensor.humidity_radiator_2',
+              'sensor.battery_sensor_3', 
+              'sensor.old_tado_temp',
+              'sensor.generic_temperature'
+            ] %}
+            {% set tado_entities = test_entities | select('search', '(sensor_|radiator_)') | list %}
+            {{ tado_entities }}
+          expected_result: >
+            Should find: temperature_sensor_1, humidity_radiator_2, battery_sensor_3
+            Should NOT find: old_tado_temp, generic_temperature
