@@ -89,7 +89,7 @@ views:
           title: "Climate Entities (Thermostats)"
         filter:
           include:
-            - entity_id: "climate.*tado*"
+            - entity_id: "climate.*(sensor_|radiator_)*"
           exclude: []
         sort:
           method: entity_id
@@ -100,7 +100,7 @@ views:
           title: "Sensor Entities (Temperature, Humidity, etc.)"
         filter:
           include:
-            - entity_id: "sensor.*tado*"
+            - entity_id: "sensor.*(sensor_|radiator_)*"
           exclude: []
         sort:
           method: entity_id
@@ -111,7 +111,7 @@ views:
           title: "Binary Sensor Entities"
         filter:
           include:
-            - entity_id: "binary_sensor.*tado*"
+            - entity_id: "binary_sensor.*(sensor_|radiator_)*"
           exclude: []
         sort:
           method: entity_id
@@ -155,9 +155,9 @@ views:
           **Manual Setup:**
           
           If auto-discovery doesn't work, you can manually set the entity names above. Look for entities like:
-          - `climate.tado_smart_radiator_thermostat_*`
-          - `climate.tado_wireless_smart_thermostat_*`
-          - Any climate entity containing "*tado*"
+          - `climate.*sensor_*` (Temperature sensors)
+          - `climate.*radiator_*` (Radiator thermostats)
+          - Any climate entity containing "*sensor_*" or "*radiator_*"
 
   - title: Advanced Settings
     path: advanced

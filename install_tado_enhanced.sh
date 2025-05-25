@@ -223,21 +223,21 @@ template:
       - name: "Available Tado Climate Entities"
         unique_id: "available_tado_climate_entities"
         state: >
-          {% set tado_entities = states.climate | selectattr('entity_id', 'search', 'tado') | list %}
+          {% set tado_entities = states.climate | selectattr('entity_id', 'search', '(sensor_|radiator_)') | list %}
           {{ tado_entities | length }}
         attributes:
           entities: >
-            {% set tado_entities = states.climate | selectattr('entity_id', 'search', 'tado') | list %}
+            {% set tado_entities = states.climate | selectattr('entity_id', 'search', '(sensor_|radiator_)') | list %}
             {{ tado_entities | map(attribute='entity_id') | list }}
           
       - name: "Available Tado Sensor Entities"
         unique_id: "available_tado_sensor_entities"
         state: >
-          {% set tado_entities = states.sensor | selectattr('entity_id', 'search', 'tado') | list %}
+          {% set tado_entities = states.sensor | selectattr('entity_id', 'search', '(sensor_|radiator_)') | list %}
           {{ tado_entities | length }}
         attributes:
           entities: >
-            {% set tado_entities = states.sensor | selectattr('entity_id', 'search', 'tado') | list %}
+            {% set tado_entities = states.sensor | selectattr('entity_id', 'search', '(sensor_|radiator_)') | list %}
             {{ tado_entities | map(attribute='entity_id') | list }}
 
 # Scripts for device configuration
@@ -459,7 +459,7 @@ views:
           title: "Climate Entities (Thermostats)"
         filter:
           include:
-            - entity_id: "climate.*tado*"
+            - entity_id: "climate.*(sensor_|radiator_)*"
           exclude: []
         sort:
           method: entity_id
@@ -470,7 +470,7 @@ views:
           title: "Sensor Entities (Temperature, Humidity, etc.)"
         filter:
           include:
-            - entity_id: "sensor.*tado*"
+            - entity_id: "sensor.*(sensor_|radiator_)*"
           exclude: []
         sort:
           method: entity_id
@@ -481,7 +481,7 @@ views:
           title: "Binary Sensor Entities"
         filter:
           include:
-            - entity_id: "binary_sensor.*tado*"
+            - entity_id: "binary_sensor.*(sensor_|radiator_)*"
           exclude: []
         sort:
           method: entity_id

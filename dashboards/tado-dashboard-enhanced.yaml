@@ -362,7 +362,7 @@ views:
                 title: "Room Thermostats"
               filter:
                 include:
-                  - entity_id: "climate.*tado*"
+                  - entity_id: "climate.*(sensor_|radiator_)*"
                 exclude: []
               sort:
                 method: friendly_name
@@ -413,9 +413,9 @@ views:
           If auto-discovery doesn't work perfectly, you can manually enter your Tado entity names above. 
           
           **Common Tado Entity Patterns:**
-          - `climate.tado_smart_radiator_thermostat_*`
-          - `climate.tado_wireless_smart_thermostat_*`
-          - Look for entities containing "*tado*" in the entity list below.
+          - `climate.*sensor_*` (Temperature sensors)
+          - `climate.*radiator_*` (Radiator thermostats)
+          - Look for entities containing "*sensor_*" or "*radiator_*" in the entity list below.
 
       - type: auto-entities
         card:
