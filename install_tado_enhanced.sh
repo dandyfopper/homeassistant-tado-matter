@@ -459,7 +459,7 @@ views:
           title: "Climate Entities (Thermostats)"
         filter:
           include:
-            - entity_id: "climate.*(sensor_|radiator_)*"
+            - entity_id: "*(sensor_|radiator_)*"
           exclude: []
         sort:
           method: entity_id
