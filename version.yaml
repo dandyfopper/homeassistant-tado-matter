@@ -1,0 +1,26 @@
+# Tado Enhanced Version Information
+version: "2.0.0"
+release_date: "2024-12-19"
+compatibility:
+  home_assistant: ">=2023.1.0"
+  tado_integration: ">=1.0.0"
+
+features:
+  - "Automatic device discovery"
+  - "Dynamic entity mapping"
+  - "Configuration dashboard"
+  - "Enhanced installation script"
+  - "Responsive UI design"
+  - "Backup and restore functionality"
+
+changelog:
+  "2.0.0":
+    - "Added automatic Tado device discovery"
+    - "Created configuration dashboard"
+    - "Enhanced installation script with backup"
+    - "Dynamic template sensors"
+    - "Responsive dashboard design"
+  "1.0.0":
+    - "Initial release"
+    - "Basic Tado dashboard"
+    - "Manual configuration required"

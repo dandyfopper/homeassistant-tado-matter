@@ -1,312 +1,342 @@
-# 🏠 Home Assistant Tado Smart Thermostat Integration
+# 🏠 Enhanced Tado Smart Thermostat Integration for Home Assistant
 
-[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2024.1+-blue.svg)](https://www.home-assistant.io/)
-[![Matter](https://img.shields.io/badge/Matter-Protocol-green.svg)](https://matter.home/)
-[![Tado](https://img.shields.io/badge/Tado-Smart%20Thermostat-orange.svg)](https://www.tado.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+## 🚀 One-Click Installation & Automatic Configuration
 
-A comprehensive Home Assistant integration for **Tado Smart Radiator Thermostat X** and **Tado Wireless Smart Thermostat X** devices connected via the **Matter protocol**. Features a stunning infographic dashboard, dynamic room configuration, and intelligent automation.
+**The easiest way to set up Tado devices in Home Assistant!**
 
-## ✨ Features
+This enhanced version features **automatic device discovery**, **intelligent entity mapping**, and a **guided setup process** that adapts to your specific Tado devices.
 
-- 🎨 **Professional Infographic Dashboard** with glassmorphism design and interactive house layout
-- 📊 **Real-time Data Visualization** with charts, metrics, and temperature overlays  
-- 🏠 **Dynamic Room Configuration** supporting 1-6 bedrooms + garage/loft
-- 📱 **Responsive Design** optimized for desktop, tablet, and mobile
-- 🤖 **Intelligent Automations** for presence, scheduling, and energy saving
-- 📈 **Analytics Dashboard** with temperature trends and energy usage
-- 🎛️ **Quick Control Scripts** for different heating modes
-- 🏗️ **Modular Architecture** for easy customization
+---
 
-## 🎨 Infographic Dashboard
+## ✨ What's New in the Enhanced Version
 
-The centerpiece of this integration is a **professional infographic dashboard** that provides:
+### 🔧 **Automatic Setup**
+- **One-click installation script** that handles everything
+- **Automatic Tado device discovery** - no manual entity editing needed
+- **Intelligent entity mapping** based on room names
+- **Guided configuration wizard** with step-by-step instructions
 
-- **Visual House Layout**: Interactive SVG showing all rooms with real-time temperature overlays
-- **Glassmorphism Design**: Modern UI with translucent cards and smooth animations  
-- **Live Metrics**: Energy savings, comfort scores, and system status at a glance
-- **Advanced Analytics**: Charts showing temperature trends, energy usage, and comfort history
-- **Smart Controls**: Quick access to heating modes and room-specific settings
+### 🎯 **Smart Adaptation**
+- **Dynamic configuration** that adapts to available devices
+- **Flexible entity support** - works with any Tado entity names
+- **Real-time device detection** and configuration updates
+- **Fallback configurations** for missing devices
 
-See [INFOGRAPHIC_INSTALLATION.md](INFOGRAPHIC_INSTALLATION.md) for setup instructions.
+### 🎨 **Enhanced Dashboard**
+- **Modern, responsive design** that works on all devices
+- **Conditional cards** that only show available rooms
+- **Real-time status indicators** for heating activity
+- **Smart temperature controls** with presets and scenes
 
-## 🚀 Quick Start
+---
 
-1. **Prerequisites**: Home Assistant with Matter integration enabled
-2. **Install**: Copy configuration files to your HA config directory
-3. **Setup**: Add your Tado devices via Matter integration
-4. **Configure**: Update entity names to match your devices
-5. **Enjoy**: Access your new Tado dashboard!
+## 📋 What You Get
 
-Detailed instructions in [INSTALLATION.md](INSTALLATION.md)
+### 🎛️ **Enhanced Dashboard Features**
+- 🏠 **Adaptive Room Grid** - Only shows your actual Tado devices
+- 🌡️ **Smart Temperature Controls** - Comfort, Eco, Boost, and Party modes
+- 📊 **Real-time Analytics** - Energy savings and efficiency tracking
+- 📱 **Mobile Optimized** - Perfect for phones and tablets
+- 🎨 **Beautiful Design** - Modern gradient-based theme
 
-## 📱 Dashboard Preview
+### 🤖 **Intelligent Automations**
+- 🏠 **Home/Away Detection** - Automatic temperature adjustment
+- 🌙 **Sleep Mode** - Optimized nighttime temperatures
+- 🌅 **Morning Warmup** - Pre-heat before you wake up
+- 🎉 **Party Mode** - Social area heating with bedroom economy
+- 🌿 **Eco Scheduling** - Smart energy-saving patterns
 
-The dashboard automatically adapts to your home layout with:
-- Interactive SVG house visualization
-- Real-time temperature and humidity displays  
-- One-touch climate control for each room
-- Quick preset buttons for common scenarios
-- Temperature history graphs and trends
+### ⚙️ **Easy Configuration**
+- 🔍 **Auto-Discovery** - Finds your Tado devices automatically
+- 🎯 **Smart Mapping** - Matches devices to rooms intelligently
+- 🔧 **Configuration Dashboard** - Easy setup and management
+- 🔄 **Live Updates** - Real-time configuration changes
 
-## 🏘️ Supported Home Layouts
+---
 
-Choose from preset configurations or customize your own:
+## 🚀 Super Easy Installation
 
-| Layout | Bedrooms | Garage | Loft | Total Zones |
-|--------|----------|--------|------|-------------|
-| Studio Apartment | 1 | ❌ | ❌ | 4 |
-| Small House | 2 | ✅ | ❌ | 6 |
-| Family Home | 3 | ✅ | ✅ | 8 |
-| Large Family | 4 | ✅ | ✅ | 9 |
-| Executive Home | 5 | ✅ | ✅ | 10 |
-| Manor House | 6 | ✅ | ✅ | 11 |
+### Option 1: One-Line Installation (Recommended)
 
-*Core rooms (Living Room, Kitchen, Bathroom) are always included*
-
-## Prerequisites
-
-1. **Tado Devices Connected to Matter**
-   - Ensure all your Tado devices are connected to your Matter network
-   - Your Tado devices should appear in your Matter controller
-
-2. **Home Assistant Setup**
-   - Home Assistant should be running on homeassistant.local:8123
-   - Matter integration should be enabled
-
-## Installation Instructions
-
-### 1. Copy Configuration Files
-
-Copy all the configuration files to your Home Assistant configuration directory:
+Run this command from your Home Assistant configuration directory:
 
 ```bash
-# Navigate to your Home Assistant config directory
-cd /config
-
-# Copy the main configuration
-cp configuration.yaml configuration.yaml.backup  # Backup existing config
-# Then merge the contents or use the provided configuration.yaml
-
-# Create necessary directories
-mkdir -p themes dashboards www
-
-# Copy theme files
-cp themes/tado_theme.yaml themes/
-
-# Copy dashboard configuration
-cp dashboards/tado-home.yaml dashboards/
-
-# Copy static assets
-cp www/house-layout.svg www/
-
-# Copy automation and script files
-cp automations.yaml .
-cp scripts.yaml .
-cp ui-lovelace.yaml .
+cd /config && curl -sSL https://raw.githubusercontent.com/your-repo/tado-enhanced/main/install_tado_enhanced.sh | bash
 ```
 
-### 2. Install Required Custom Components
+### Option 2: Manual Installation
 
-You'll need the `button-card` custom component for the enhanced dashboard:
+1. **Download the files:**
+```bash
+cd /config
+git clone https://github.com/your-repo/tado-enhanced.git
+cd tado-enhanced
+```
 
-1. **Install HACS** (if not already installed):
-   - Follow the instructions at https://hacs.xyz/docs/setup/download
+2. **Run the setup script:**
+```bash
+chmod +x install_tado_enhanced.sh
+./install_tado_enhanced.sh
+```
 
-2. **Install button-card**:
+### Option 3: Step-by-Step Installation
+
+1. **Download and extract** the files to your `/config` directory
+2. **Copy the files** to the correct locations:
+   - `packages/tado_enhanced.yaml` → `packages/`
+   - `packages/tado_device_discovery.yaml` → `packages/`
+   - `dashboards/tado-dashboard-enhanced.yaml` → `dashboards/`
+   - `dashboards/tado-configuration.yaml` → `dashboards/`
+3. **Update your `configuration.yaml`** to include packages:
+```yaml
+homeassistant:
+  packages: !include_dir_named packages
+```
+4. **Restart Home Assistant**
+
+---
+
+## 📝 Post-Installation Setup
+
+### 1. Install Dependencies (if not done automatically)
+- **HACS**: Install from https://hacs.xyz if not already installed
+- **button-card**: HACS → Frontend → Search "button-card" → Install
+- **card-mod** (optional): HACS → Frontend → Search "card-mod" → Install
+
+### 2. Follow the Setup Wizard
+1. **Restart Home Assistant** after installation
+2. **Go to "Tado Configuration"** in your sidebar
+3. **Click "Auto-Discover Devices"** to find your Tado entities
+4. **Review and apply** the automatic configuration
+5. **Visit the main dashboard** to see your devices!
+
+### 3. Customize (Optional)
+- **Adjust room layouts** using the configuration dashboard
+- **Modify temperature presets** to your preferences
+- **Set up automations** for your daily routines
+
+---
+
+## 🎯 How It Works
+
+### Smart Device Discovery
+The system automatically:
+1. **Scans for Tado entities** in your Home Assistant
+2. **Matches devices to rooms** based on entity names
+3. **Creates dynamic templates** that adapt to your devices
+4. **Updates the dashboard** to show only available rooms
+
+### Intelligent Entity Mapping
+- **Living Room**: Looks for entities with "living", "lounge", or "main"
+- **Bedroom**: Matches "bedroom", "bed", "sleep", or "master"
+- **Kitchen**: Finds "kitchen", "dining", or "cook"
+- **Office**: Matches "office", "study", "work", or "den"
+
+### Fallback Support
+If a device isn't found:
+- **Dashboard adapts** to hide unavailable rooms
+- **Scripts continue working** with available devices
+- **Manual override** available through configuration
+
+---
+
+## 🎨 Dashboard Features
+
+### Main Dashboard Views
+
+#### 🏠 **Smart Home Overview**
+- **Quick status bar** with home temperature and energy savings
+- **One-click mode buttons** for Comfort, Eco, Boost, and Party
+- **Adaptive room grid** showing only your actual devices
+- **Individual room cards** with temperature and heating status
+
+#### ⚙️ **Device Configuration**
+- **Auto-discovery controls** for finding devices
+- **Entity mapping interface** for manual configuration
+- **Real-time status display** of discovered devices
+- **Entity reference guide** for troubleshooting
+
+#### 📊 **Temperature History**
+- **24-hour temperature graphs** for all rooms
+- **Daily average statistics** for efficiency tracking
+- **Energy efficiency gauges** with visual indicators
+- **Historical trend analysis** for optimization
+
+---
+
+## 🔧 Advanced Configuration
+
+### Custom Entity Names
+If you have non-standard entity names, manually configure them:
+
+1. **Go to the Configuration dashboard**
+2. **Set "Device Setup Mode" to "Manual Configuration"**
+3. **Enter your entity names** in the text fields
+4. **Click "Apply Configuration"**
+
+### Adding More Rooms
+To add additional rooms beyond the standard four:
+
+1. **Add new input_text entities** in `packages/tado_device_discovery.yaml`
+2. **Create corresponding template sensors** in `packages/tado_enhanced.yaml`
+3. **Add new room cards** to the dashboard configuration
+4. **Update scripts** to include the new entities
+
+### Custom Temperature Presets
+Modify the temperature settings in the Configuration dashboard:
+- **Comfort Temperature**: Default 21°C
+- **Eco Temperature**: Default 18°C
+- **Boost Temperature**: Default 25°C
+
+---
+
+## 🤝 Supported Tado Devices
+
+### ✅ **Fully Supported**
+- **Tado Smart Radiator Thermostats** (all versions)
+- **Tado Wireless Smart Thermostats** (all versions)
+- **Tado devices via Matter integration**
+- **Tado devices via official integration**
+
+### 🔌 **Integration Methods**
+- **Matter Protocol** (recommended for new setups)
+- **Official Tado Integration** (cloud-based)
+- **Custom Integrations** (community solutions)
+
+### 📡 **Entity Patterns Detected**
+The system automatically detects these common patterns:
+- `climate.tado_smart_radiator_thermostat_*`
+- `climate.tado_wireless_smart_thermostat_*`
+- `climate.*tado*` (any entity containing "tado")
+- Custom patterns can be manually configured
+
+---
+
+## 🔧 Troubleshooting
+
+### Common Installation Issues
+
+#### Issue: CLI commands not working / API requires authentication
+**Symptoms:** Installation script reports CLI errors or API authentication failures
+**Solutions:**
+This is completely normal! The installation script no longer depends on CLI commands or API access for entity discovery. Instead:
+
+1. **Entity discovery happens automatically** after Home Assistant restarts through template sensors
+2. **No CLI dependency** - the script only copies files and updates configuration
+3. **No API authentication needed** - discovery happens inside Home Assistant
+4. **Works with all HA installation types** - OS, Supervised, Container, Core
+
+**What the script does now:**
+- ✅ Copies configuration files to correct locations
+- ✅ Creates device discovery helpers  
+- ✅ Sets up configuration dashboard
+- ✅ Updates configuration.yaml to include packages
+- ✅ Entity discovery happens after restart via templates
+
+#### Issue: "ha supervisor api" command doesn't exist
+**Solution:** This command was removed from the script. Entity discovery now happens through Home Assistant's built-in template sensors after restart.
+
+#### Issue: Entity discovery not working during installation
+**This is normal!** Entity discovery no longer happens during installation.
+
+**How it works now:**
+1. **Installation script** copies files and sets up configuration
+2. **Restart Home Assistant** to load the new packages
+3. **Template sensors automatically discover** Tado entities
+4. **Use the Configuration dashboard** to see discovered entities and complete setup
+
+**No manual CLI commands needed** - everything happens automatically through Home Assistant's template system.
+
+#### Issue: Home Assistant CLI not available
+**This is completely normal!** The installation script no longer requires CLI access.
+
+**For different installation types:**
+- **Home Assistant OS/Supervised:** CLI available but not needed
+- **Container/Core installations:** CLI typically not available, but not needed
+- **All installations:** Entity discovery works through template sensors after restart
+
+**No additional software needed** - the script works without any CLI dependencies.
+
+#### Issue: Package configuration not loading
+**Symptoms:** Tado helpers not appearing in Home Assistant
+**Solutions:**
+1. Check that `configuration.yaml` includes packages:
+   ```yaml
+   homeassistant:
+     packages: !include_dir_named packages
+   ```
+2. Validate YAML syntax:
+   ```bash
+   python3 -c "import yaml; yaml.safe_load(open('packages/tado_device_discovery.yaml'))"
+   ```
+3. Check Home Assistant logs for package loading errors
+4. Restart Home Assistant after adding packages
+
+#### Issue: Dashboard not appearing in sidebar
+**Solutions:**
+1. Check that `ui-lovelace.yaml` exists and includes dashboard configuration
+2. Make sure dashboard mode is set to YAML in Configuration → Dashboards
+3. Verify the dashboard file exists in `dashboards/tado-configuration.yaml`
+4. Clear browser cache and refresh
+
+#### Issue: Button-card not working
+**Symptoms:** Dashboard cards showing as "Custom element doesn't exist"
+**Solutions:**
+1. Install button-card via HACS:
    - Go to HACS → Frontend
    - Search for "button-card"
-   - Install the component
+   - Install and restart
+2. Clear browser cache after installation
+3. Check that HACS is properly configured
 
-### 3. Configure Matter Integration
+### Advanced Debugging
 
-1. **Enable Matter Integration**:
-   - Go to Settings → Devices & Services
-   - Add Integration → Matter
-   - Follow the setup wizard
+#### Check Entity Discovery
+```bash
+# Run health check script
+./health_check.sh
 
-2. **Add Tado Devices**:
-   - Your Tado devices should automatically discover via Matter
-   - If not, manually add them through the Matter integration
-
-### 4. Update Entity Names
-
-After your Tado devices are discovered, you'll need to update the entity names in the configuration files to match your actual device entities:
-
-1. Check your actual entity names in Developer Tools → States
-2. Update the following files with your actual entity names:
-   - `configuration.yaml` (template sensors and groups)
-   - `dashboards/tado-home.yaml` (dashboard entities)
-   - `automations.yaml` (automation entities)
-   - `scripts.yaml` (script entities)
-
-Common entity naming patterns:
-- `climate.tado_smart_radiator_thermostat_x_living_room`
-- `sensor.tado_smart_radiator_thermostat_x_living_room_temperature`
-- `sensor.tado_smart_radiator_thermostat_x_living_room_humidity`
-
-### 5. Restart Home Assistant
-
-After copying all files and updating entity names:
-1. Go to Developer Tools → YAML
-2. Check configuration
-3. Restart Home Assistant
-
-### 6. Add Dashboard
-
-1. Go to your Home Assistant dashboard
-2. Click the "+" to add a new dashboard
-3. Select "Take control" and then import the Lovelace configuration
-4. Or manually create a new dashboard and copy the contents from `dashboards/tado-home.yaml`
-
-## Customization
-
-### Room Layout
-- Edit `www/house-layout.svg` to match your actual house layout
-- Adjust the positions of thermostat icons in the dashboard YAML
-
-### Device Mapping
-Update the entity mappings based on your actual Tado device locations:
-
-```yaml
-# Example mapping - update with your actual entities
-Living Room: climate.tado_smart_radiator_thermostat_x_living_room
-Bedroom: climate.tado_smart_radiator_thermostat_x_bedroom  
-Kitchen: climate.tado_smart_radiator_thermostat_x_kitchen
-Office: climate.tado_wireless_smart_thermostat_x_office
+# Manual entity checking
+grep -r "tado" /config/packages/
+ha supervisor api --raw-json /core/api/states | grep -i tado
 ```
 
-### Automation Personalization
-- Update `person.user` in automations.yaml with your actual person entity
-- Adjust temperature settings and timing to match your preferences
-- Add additional rooms or devices as needed
+#### Validate Installation
+```bash
+# Check file structure
+ls -la packages/tado*.yaml
+ls -la dashboards/tado*.yaml
 
-## Features
-
-### Dashboard Features
-- **Visual House Layout**: Interactive SVG showing your home with thermostat positions
-- **Real-time Temperature**: Live temperature and humidity readings
-- **Quick Controls**: Easy access to adjust each thermostat
-- **Temperature History**: 24-hour temperature graph
-- **Status Indicators**: Visual indicators for heating status
-
-### Automation Features
-- **Presence Detection**: Automatically adjust heating when away/home
-- **Night Mode**: Lower bedroom temperature at night
-- **Morning Warmup**: Pre-heat living areas in the morning
-- **Window Open Detection**: Turn off heating when windows are open (if supported)
-
-### Script Features
-- **Eco Mode**: Set all thermostats to energy-saving temperature
-- **Comfort Mode**: Set all thermostats to comfortable temperature
-- **Party Mode**: Warm up social areas for entertaining
-- **Sleep Mode**: Optimize temperatures for sleeping
-- **Vacation Mode**: Minimal heating when away for extended periods
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Devices Not Appearing**:
-   - Ensure Tado devices are properly connected to Matter
-   - Check Matter integration status
-   - Restart Home Assistant
-
-2. **Dashboard Not Loading**:
-   - Check that button-card is properly installed
-   - Verify all entity names are correct
-   - Check Home Assistant logs for errors
-
-3. **Automations Not Working**:
-   - Verify person entity exists and is correct
-   - Check that climate entities support the required services
-   - Enable automation debugging in logger
-
-### Logs
-Enable debugging for Tado/Matter components:
-
-```yaml
-logger:
-  default: info
-  logs:
-    homeassistant.components.matter: debug
-    homeassistant.components.climate: debug
+# Check YAML syntax
+python3 -c "import yaml; [yaml.safe_load(open(f)) for f in ['packages/tado_enhanced.yaml', 'packages/tado_device_discovery.yaml']]"
 ```
 
-## Support
+#### Reset Installation
+If you need to start over:
+```bash
+# Run with force reinstall
+./install_tado_enhanced.sh --force
 
-For additional help:
-- Check Home Assistant documentation for Matter integration
-- Visit Tado support for device-specific issues
-- Home Assistant community forums for configuration help
+# Or manual cleanup
+rm -rf packages/tado*.yaml dashboards/tado*.yaml
+# Then reinstall
+```
 
-## License
+#### Common Entity Patterns
+If automatic discovery fails, check for these common Tado entity patterns:
+- `climate.tado_smart_thermostat_*`
+- `climate.*_tado`
+- `sensor.tado_*_temperature`
+- `sensor.*_tado_*`
 
-This configuration is provided as-is for personal use. Modify as needed for your specific setup.
+### Getting Help
 
-## 🏠 Dynamic Room Configuration
+If you're still having issues:
 
-This Tado integration includes a flexible room layout system that adapts to different home configurations:
+1. **Check the logs:** Go to Settings → System → Logs and look for Tado-related errors
+2. **Run health check:** Execute `./health_check.sh` to identify specific issues  
+3. **Validate setup:** Use the Tado Configuration dashboard to check device detection
+4. **Update:** Try running `./update_tado.sh` to get the latest fixes
+5. **Create an issue:** Include your Home Assistant version, installation method, and error logs
 
-### 🔧 Configuration Options
-
-- **Number of Bedrooms**: 1-6 bedrooms supported
-- **Garage**: Toggle to include/exclude garage climate control
-- **Loft**: Toggle to include/exclude loft climate control
-- **Layout Presets**: Quick presets for common home types
-
-### 🏘️ Supported Layout Presets
-
-1. **Studio Apartment**: 1 bedroom, no garage, no loft (4 zones total)
-2. **Small House**: 2 bedrooms, garage, no loft (6 zones total)
-3. **Family Home**: 3 bedrooms, garage, loft (8 zones total)
-4. **Large Family Home**: 4 bedrooms, garage, loft (9 zones total) - **DEFAULT**
-5. **Executive Home**: 5 bedrooms, garage, loft (10 zones total)
-6. **Manor House**: 6 bedrooms, garage, loft (11 zones total)
-
-### 🎛️ How It Works
-
-1. **Automatic Layout Detection**: The system automatically detects your current configuration
-2. **Dynamic Dashboard**: Cards and room controls adapt based on your selection
-3. **SVG House Layout**: Visual representation updates to show your exact room layout
-4. **Entity Management**: Groups and sensors automatically include only active rooms
-5. **Quick Switching**: Use preset buttons or manual configuration to change layouts
-
-### 🏗️ Core Rooms (Always Present)
-
-- Living Room
-- Kitchen  
-- Bathroom
-
-### 🛏️ Variable Rooms
-
-- **Bedrooms**: 1-6 configurable bedrooms with individual climate control
-- **Garage**: Optional garage with climate control
-- **Loft**: Optional loft/attic space with climate control
-
-### 🎯 Default Configuration
-
-The system defaults to a **Large Family Home** configuration:
-- 4 Bedrooms
-- Garage included
-- Loft included
-- **Total: 9 climate zones**
-
-### 📊 Dynamic Features
-
-All dashboard elements automatically adapt:
-- Room control cards show only active rooms
-- Temperature graphs include only configured spaces
-- House layout SVG highlights active areas
-- Automation scripts target only active zones
-- Statistics and overviews reflect current configuration
-
-### ⚙️ Entity Naming Convention
-
-Entities follow this pattern:
-- `climate.bedroom_1_tado` through `climate.bedroom_6_tado`
-- `climate.garage_tado` (when enabled)
-- `climate.loft_tado` (when enabled)
-- `sensor.bedroom_1_tado_temperature` etc.
-
-## 🚀 Quick Setup
+---

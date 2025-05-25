@@ -1,0 +1,248 @@
+# Tado Configuration Dashboard
+# Easy setup and configuration interface for Tado devices
+
+title: Tado Configuration
+icon: mdi:cog
+path: tado-config
+
+views:
+  - title: Device Setup
+    path: setup
+    icon: mdi:devices
+    cards:
+      # Setup progress card
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |
+              # 🏠 Tado Device Configuration
+              
+              Use this dashboard to easily set up your Tado devices. The system will automatically detect your Tado entities and configure the dashboard.
+              
+              ## Setup Progress
+              
+          - type: entities
+            title: "Setup Progress"
+            entities:
+              - input_select.tado_installation_step
+              - input_select.tado_device_setup_mode
+
+      # Device Discovery Section
+      - type: conditional
+        conditions:
+          - entity: input_select.tado_installation_step
+            state_not: "5. Complete"
+        card:
+          type: vertical-stack
+          cards:
+            - type: markdown
+              content: |
+                ## 🔍 Device Discovery
+                
+                Click the button below to automatically discover your Tado devices:
+                
+            - type: button
+              tap_action:
+                action: call-service
+                service: script.tado_auto_discover_entities
+              name: "🔍 Discover Tado Devices"
+              
+            - type: entities
+              title: "Discovered Devices"
+              entities:
+                - sensor.available_tado_climate_entities
+                - sensor.available_tado_sensor_entities
+
+      # Manual Configuration Section  
+      - type: conditional
+        conditions:
+          - entity: input_select.tado_device_setup_mode
+            state: "Manual Configuration"
+        card:
+          type: vertical-stack
+          cards:
+            - type: markdown
+              content: |
+                ## 🔧 Manual Entity Configuration
+                
+                If automatic discovery doesn't work, you can manually enter your Tado entity names:
+                
+            - type: entities
+              title: "Climate Entity Names"
+              entities:
+                - input_text.tado_living_room_entity
+                - input_text.tado_bedroom_entity
+                - input_text.tado_kitchen_entity
+                - input_text.tado_office_entity
+                
+            - type: button
+              tap_action:
+                action: call-service
+                service: script.tado_apply_discovered_entities
+              name: "Apply Configuration"
+
+      # Setup completion
+      - type: conditional
+        conditions:
+          - entity: input_select.tado_installation_step
+            state: "5. Complete"
+        card:
+          type: markdown
+          content: |
+            # ✅ Setup Complete!
+            
+            Your Tado configuration is now ready. You can:
+            
+            - Visit the **Tado Smart Home** dashboard to see your devices
+            - Customize room layouts in the configuration
+            - Set up automations for different heating modes
+            
+            **Next Steps:**
+            1. Go to the main Tado dashboard 
+            2. Configure your room layout
+            3. Test the heating controls
+            4. Set up automations if desired
+
+  - title: Entity Reference
+    path: entities
+    icon: mdi:list-box
+    cards:
+      - type: markdown
+        content: |
+          # 📋 Tado Entity Reference
+          
+          This section shows all available Tado entities in your system for easy reference.
+          
+      - type: auto-entities
+        card:
+          type: entities
+          title: "Climate Entities (Thermostats)"
+        filter:
+          include:
+            - entity_id: "climate.*tado*"
+          exclude: []
+        sort:
+          method: entity_id
+          
+      - type: auto-entities
+        card:
+          type: entities
+          title: "Sensor Entities (Temperature, Humidity, etc.)"
+        filter:
+          include:
+            - entity_id: "sensor.*tado*"
+          exclude: []
+        sort:
+          method: entity_id
+          
+      - type: auto-entities
+        card:
+          type: entities  
+          title: "Binary Sensor Entities"
+        filter:
+          include:
+            - entity_id: "binary_sensor.*tado*"
+          exclude: []
+        sort:
+          method: entity_id
+
+  - title: System Status
+    path: status
+    icon: mdi:information
+    cards:
+      - type: markdown
+        content: |
+          # 📊 System Status
+          
+          Monitor your Tado system configuration and health.
+          
+      - type: entities
+        title: "Configuration Status"
+        entities:
+          - sensor.available_tado_climate_entities
+          - sensor.available_tado_sensor_entities
+          - input_select.tado_device_setup_mode
+          - input_select.tado_installation_step
+          
+      - type: entities
+        title: "Current Entity Mapping"
+        entities:
+          - input_text.tado_living_room_entity
+          - input_text.tado_bedroom_entity
+          - input_text.tado_kitchen_entity
+          - input_text.tado_office_entity
+          
+      - type: markdown
+        content: |
+          ## 🔧 Need Help?
+          
+          **Common Issues:**
+          
+          1. **No devices discovered**: Make sure your Tado devices are connected via Matter integration
+          2. **Wrong entity names**: Check the Entity Reference tab for correct entity IDs  
+          3. **Dashboard not updating**: Try restarting Home Assistant
+          
+          **Manual Setup:**
+          
+          If auto-discovery doesn't work, you can manually set the entity names above. Look for entities like:
+          - `climate.tado_smart_radiator_thermostat_*`
+          - `climate.tado_wireless_smart_thermostat_*`
+          - Any climate entity containing "*tado*"
+
+  - title: Advanced Settings
+    path: advanced
+    icon: mdi:tune
+    cards:
+      - type: markdown
+        content: |
+          # ⚙️ Advanced Configuration
+          
+          Fine-tune your Tado setup with these advanced options.
+          
+      - type: entities
+        title: "Temperature Presets"
+        entities:
+          - input_number.tado_comfort_temperature
+          - input_number.tado_eco_temperature
+          - input_number.tado_boost_temperature
+          
+      - type: entities
+        title: "System Toggles"
+        entities:
+          - input_boolean.tado_geofencing_enabled
+          - input_boolean.tado_window_detection_enabled
+          - input_boolean.tado_adaptive_scheduling
+          
+      - type: button
+        tap_action:
+          action: call-service
+          service: script.tado_reset_configuration
+        name: "🔄 Reset Configuration"
+        confirmation:
+          text: "Are you sure you want to reset all Tado configuration? This will clear all entity mappings and settings."
+          
+      - type: markdown
+        content: |
+          ## 🎛️ Dashboard Customization
+          
+          You can customize the appearance and behavior of your Tado dashboard:
+          
+          - **Room Layout**: Use the room configuration settings to match your home
+          - **Temperature Units**: Change between Celsius and Fahrenheit in HA settings
+          - **Theme**: The Tado theme provides a custom look, or use your preferred theme
+          - **Card Visibility**: Cards automatically hide when devices are unavailable
+          
+          ## 📱 Mobile Optimization
+          
+          The dashboard is fully responsive and optimized for:
+          - **Phone screens**: Compact layout with touch-friendly controls
+          - **Tablets**: Expanded view with more detail cards
+          - **Desktop**: Full-featured interface with all options
+          
+          ## 🤖 Automation Integration
+          
+          Your Tado setup includes smart automations for:
+          - **Home/Away detection**: Adjusts temperature when you leave/return
+          - **Sleep schedules**: Optimized nighttime temperatures
+          - **Morning warmup**: Pre-heats rooms before you wake up
+          - **Party mode**: Social area heating with bedroom economy

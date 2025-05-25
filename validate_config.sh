@@ -49,7 +49,7 @@ check_dir "www"
 
 echo ""
 echo "📄 Checking required files..."
-check_file "packages/tado.yaml"
+check_file "packages/tado_enhanced.yaml"
 check_file "packages/room_configuration.yaml"
 check_file "packages/tado_demo_data.yaml"
 check_file "dashboards/tado-infographic-enhanced.yaml"
@@ -100,10 +100,10 @@ fi
 
 echo ""
 echo "🤖 Checking Matter integration..."
-if [ -f "packages/tado.yaml" ]; then
-    check_config "packages/tado.yaml" "climate."
-    check_config "packages/tado.yaml" "sensor."
-    check_config "packages/tado.yaml" "template:"
+if [ -f "packages/tado_enhanced.yaml" ]; then
+    check_config "packages/tado_enhanced.yaml" "climate."
+    check_config "packages/tado_enhanced.yaml" "sensor."
+    check_config "packages/tado_enhanced.yaml" "template:"
 fi
 
 echo ""

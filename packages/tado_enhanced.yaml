@@ -1,0 +1,495 @@
+# Enhanced Tado Smart Thermostat Package
+# This package automatically adapts to available Tado devices in your system
+
+# Template sensors that dynamically discover and work with any Tado entities
+template:
+  - sensor:
+      # Dynamic room sensors that adapt to available entities
+      - name: "Tado Living Room Status"
+        unique_id: "tado_living_room_status"
+        state: >
+          {% set entity = states('input_text.tado_living_room_entity') | default('climate.living_room_tado') %}
+          {% if states(entity) not in ['unknown', 'unavailable'] %}
+            {% set temp = state_attr(entity, 'current_temperature') | float(0) %}
+            {% if temp < 18 %}cold{% elif temp < 22 %}comfortable{% else %}warm{% endif %}
+          {% else %}unavailable{% endif %}
+        icon: >
+          {% set entity = states('input_text.tado_living_room_entity') | default('climate.living_room_tado') %}
+          {% if states(entity) not in ['unknown', 'unavailable'] %}
+            {% set temp = state_attr(entity, 'current_temperature') | float(0) %}
+            {% if temp < 18 %}mdi:snowflake{% elif temp < 22 %}mdi:thermometer{% else %}mdi:fire{% endif %}
+          {% else %}mdi:help{% endif %}
+        attributes:
+          temperature: >
+            {% set entity = states('input_text.tado_living_room_entity') | default('climate.living_room_tado') %}
+            {% if states(entity) not in ['unknown', 'unavailable'] %}
+              {{ state_attr(entity, 'current_temperature') }}°C
+            {% else %}Unknown{% endif %}
+          target_temperature: >
+            {% set entity = states('input_text.tado_living_room_entity') | default('climate.living_room_tado') %}
+            {% if states(entity) not in ['unknown', 'unavailable'] %}
+              {{ state_attr(entity, 'temperature') }}°C
+            {% else %}Unknown{% endif %}
+          hvac_mode: >
+            {% set entity = states('input_text.tado_living_room_entity') | default('climate.living_room_tado') %}
+            {% if states(entity) not in ['unknown', 'unavailable'] %}
+              {{ states(entity) }}
+            {% else %}Unknown{% endif %}
+          hvac_action: >
+            {% set entity = states('input_text.tado_living_room_entity') | default('climate.living_room_tado') %}
+            {% if states(entity) not in ['unknown', 'unavailable'] %}
+              {{ state_attr(entity, 'hvac_action') | default('idle') }}
+            {% else %}Unknown{% endif %}
+
+      - name: "Tado Bedroom Status"  
+        unique_id: "tado_bedroom_status"
+        state: >
+          {% set entity = states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado') %}
+          {% if states(entity) not in ['unknown', 'unavailable'] %}
+            {% set temp = state_attr(entity, 'current_temperature') | float(0) %}
+            {% if temp < 18 %}cold{% elif temp < 22 %}comfortable{% else %}warm{% endif %}
+          {% else %}unavailable{% endif %}
+        icon: >
+          {% set entity = states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado') %}
+          {% if states(entity) not in ['unknown', 'unavailable'] %}
+            {% set temp = state_attr(entity, 'current_temperature') | float(0) %}
+            {% if temp < 18 %}mdi:snowflake{% elif temp < 22 %}mdi:thermometer{% else %}mdi:fire{% endif %}
+          {% else %}mdi:help{% endif %}
+        attributes:
+          temperature: >
+            {% set entity = states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado') %}
+            {% if states(entity) not in ['unknown', 'unavailable'] %}
+              {{ state_attr(entity, 'current_temperature') }}°C
+            {% else %}Unknown{% endif %}
+          target_temperature: >
+            {% set entity = states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado') %}
+            {% if states(entity) not in ['unknown', 'unavailable'] %}
+              {{ state_attr(entity, 'temperature') }}°C
+            {% else %}Unknown{% endif %}
+          hvac_mode: >
+            {% set entity = states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado') %}
+            {% if states(entity) not in ['unknown', 'unavailable'] %}
+              {{ states(entity) }}
+            {% else %}Unknown{% endif %}
+
+      - name: "Tado Kitchen Status"
+        unique_id: "tado_kitchen_status"  
+        state: >
+          {% set entity = states('input_text.tado_kitchen_entity') | default('climate.kitchen_tado') %}
+          {% if states(entity) not in ['unknown', 'unavailable'] %}
+            {% set temp = state_attr(entity, 'current_temperature') | float(0) %}
+            {% if temp < 18 %}cold{% elif temp < 22 %}comfortable{% else %}warm{% endif %}
+          {% else %}unavailable{% endif %}
+        icon: >
+          {% set entity = states('input_text.tado_kitchen_entity') | default('climate.kitchen_tado') %}
+          {% if states(entity) not in ['unknown', 'unavailable'] %}
+            {% set temp = state_attr(entity, 'current_temperature') | float(0) %}
+            {% if temp < 18 %}mdi:snowflake{% elif temp < 22 %}mdi:thermometer{% else %}mdi:fire{% endif %}
+          {% else %}mdi:help{% endif %}
+        attributes:
+          temperature: >
+            {% set entity = states('input_text.tado_kitchen_entity') | default('climate.kitchen_tado') %}
+            {% if states(entity) not in ['unknown', 'unavailable'] %}
+              {{ state_attr(entity, 'current_temperature') }}°C
+            {% else %}Unknown{% endif %}
+          target_temperature: >
+            {% set entity = states('input_text.tado_kitchen_entity') | default('climate.kitchen_tado') %}
+            {% if states(entity) not in ['unknown', 'unavailable'] %}
+              {{ state_attr(entity, 'temperature') }}°C
+            {% else %}Unknown{% endif %}
+
+      - name: "Tado Office Status"
+        unique_id: "tado_office_status"
+        state: >
+          {% set entity = states('input_text.tado_office_entity') | default('climate.office_tado') %}
+          {% if states(entity) not in ['unknown', 'unavailable'] %}
+            {% set temp = state_attr(entity, 'current_temperature') | float(0) %}
+            {% if temp < 18 %}cold{% elif temp < 22 %}comfortable{% else %}warm{% endif %}
+          {% else %}unavailable{% endif %}
+        icon: >
+          {% set entity = states('input_text.tado_office_entity') | default('climate.office_tado') %}
+          {% if states(entity) not in ['unknown', 'unavailable'] %}
+            {% set temp = state_attr(entity, 'current_temperature') | float(0) %}
+            {% if temp < 18 %}mdi:snowflake{% elif temp < 22 %}mdi:thermometer{% else %}mdi:fire{% endif %}
+          {% else %}mdi:help{% endif %}
+
+      # Overall home status
+      - name: "Tado Home Average Temperature"
+        unique_id: "tado_home_avg_temp"
+        state: >
+          {% set entities = [
+            states('input_text.tado_living_room_entity') | default('climate.living_room_tado'),
+            states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado'),
+            states('input_text.tado_kitchen_entity') | default('climate.kitchen_tado'),
+            states('input_text.tado_office_entity') | default('climate.office_tado')
+          ] %}
+          {% set temps = [] %}
+          {% for entity in entities %}
+            {% if states(entity) not in ['unknown', 'unavailable'] %}
+              {% set temp = state_attr(entity, 'current_temperature') | float(0) %}
+              {% if temp > 0 %}
+                {% set temps = temps + [temp] %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% if temps | length > 0 %}
+            {{ (temps | sum / temps | length) | round(1) }}
+          {% else %}
+            Unknown
+          {% endif %}
+        unit_of_measurement: "°C"
+        icon: mdi:home-thermometer
+
+      # Energy and efficiency tracking
+      - name: "Tado Energy Savings Today"
+        unique_id: "tado_energy_savings_today"
+        state: >
+          {% set entities = [
+            states('input_text.tado_living_room_entity') | default('climate.living_room_tado'),
+            states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado'),
+            states('input_text.tado_kitchen_entity') | default('climate.kitchen_tado'),
+            states('input_text.tado_office_entity') | default('climate.office_tado')
+          ] %}
+          {% set heating_count = 0 %}
+          {% for entity in entities %}
+            {% if states(entity) not in ['unknown', 'unavailable'] %}
+              {% if state_attr(entity, 'hvac_action') == 'heating' %}
+                {% set heating_count = heating_count + 1 %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% set total_devices = entities | length %}
+          {% if total_devices > 0 %}
+            {{ ((total_devices - heating_count) / total_devices * 100) | round(0) }}
+          {% else %}
+            0
+          {% endif %}
+        unit_of_measurement: "%"
+        icon: mdi:leaf
+
+# Input selections for easy control
+input_select:
+  tado_home_mode:
+    name: "Home Mode"
+    options:
+      - "Home"
+      - "Away"
+      - "Sleep"
+      - "Vacation"
+      - "Manual"
+    initial: "Home"
+    icon: mdi:home-thermometer
+
+  tado_preset_mode:
+    name: "Temperature Preset"
+    options:
+      - "Comfort"
+      - "Eco"
+      - "Boost"
+      - "Party"
+      - "Custom"
+    initial: "Comfort"
+    icon: mdi:thermometer-lines
+
+# Input numbers for target temperatures
+input_number:
+  tado_comfort_temperature:
+    name: "Comfort Temperature"
+    min: 15
+    max: 25
+    step: 0.5
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+    initial: 21
+
+  tado_eco_temperature:
+    name: "Eco Temperature"  
+    min: 10
+    max: 22
+    step: 0.5
+    unit_of_measurement: "°C"
+    icon: mdi:leaf
+    initial: 18
+
+  tado_boost_temperature:
+    name: "Boost Temperature"
+    min: 20
+    max: 30
+    step: 0.5
+    unit_of_measurement: "°C"
+    icon: mdi:fire
+    initial: 25
+
+# Smart scripts that work with any Tado entities
+script:
+  tado_set_comfort_mode:
+    alias: "Set All Tado to Comfort Mode"
+    sequence:
+      - service: climate.set_temperature
+        data:
+          temperature: "{{ states('input_number.tado_comfort_temperature') | float }}"
+        target:
+          entity_id: >
+            {% set entities = [
+              states('input_text.tado_living_room_entity') | default('climate.living_room_tado'),
+              states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado'),
+              states('input_text.tado_kitchen_entity') | default('climate.kitchen_tado'),
+              states('input_text.tado_office_entity') | default('climate.office_tado')
+            ] %}
+            {% set valid_entities = [] %}
+            {% for entity in entities %}
+              {% if states(entity) not in ['unknown', 'unavailable'] %}
+                {% set valid_entities = valid_entities + [entity] %}
+              {% endif %}
+            {% endfor %}
+            {{ valid_entities }}
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.tado_preset_mode
+        data:
+          option: "Comfort"
+
+  tado_set_eco_mode:
+    alias: "Set All Tado to Eco Mode"
+    sequence:
+      - service: climate.set_temperature
+        data:
+          temperature: "{{ states('input_number.tado_eco_temperature') | float }}"
+        target:
+          entity_id: >
+            {% set entities = [
+              states('input_text.tado_living_room_entity') | default('climate.living_room_tado'),
+              states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado'),
+              states('input_text.tado_kitchen_entity') | default('climate.kitchen_tado'),
+              states('input_text.tado_office_entity') | default('climate.office_tado')
+            ] %}
+            {% set valid_entities = [] %}
+            {% for entity in entities %}
+              {% if states(entity) not in ['unknown', 'unavailable'] %}
+                {% set valid_entities = valid_entities + [entity] %}
+              {% endif %}
+            {% endfor %}
+            {{ valid_entities }}
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.tado_preset_mode
+        data:
+          option: "Eco"
+
+  tado_set_boost_mode:
+    alias: "Set All Tado to Boost Mode"
+    sequence:
+      - service: climate.set_temperature
+        data:
+          temperature: "{{ states('input_number.tado_boost_temperature') | float }}"
+        target:
+          entity_id: >
+            {% set entities = [
+              states('input_text.tado_living_room_entity') | default('climate.living_room_tado'),
+              states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado'),
+              states('input_text.tado_kitchen_entity') | default('climate.kitchen_tado'),
+              states('input_text.tado_office_entity') | default('climate.office_tado')
+            ] %}
+            {% set valid_entities = [] %}
+            {% for entity in entities %}
+              {% if states(entity) not in ['unknown', 'unavailable'] %}
+                {% set valid_entities = valid_entities + [entity] %}
+              {% endif %}
+            {% endfor %}
+            {{ valid_entities }}
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.tado_preset_mode
+        data:
+          option: "Boost"
+      - delay:
+          hours: 1
+      - service: script.tado_set_comfort_mode
+
+  tado_turn_off_all:
+    alias: "Turn Off All Tado Devices"
+    sequence:
+      - service: climate.turn_off
+        target:
+          entity_id: >
+            {% set entities = [
+              states('input_text.tado_living_room_entity') | default('climate.living_room_tado'),
+              states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado'),
+              states('input_text.tado_kitchen_entity') | default('climate.kitchen_tado'),
+              states('input_text.tado_office_entity') | default('climate.office_tado')
+            ] %}
+            {% set valid_entities = [] %}
+            {% for entity in entities %}
+              {% if states(entity) not in ['unknown', 'unavailable'] %}
+                {% set valid_entities = valid_entities + [entity] %}
+              {% endif %}
+            {% endfor %}
+            {{ valid_entities }}
+
+  tado_party_mode:
+    alias: "Tado Party Mode"
+    sequence:
+      - service: climate.set_temperature
+        data:
+          temperature: 22
+        target:
+          entity_id: >
+            {% set living_entity = states('input_text.tado_living_room_entity') | default('climate.living_room_tado') %}
+            {% set kitchen_entity = states('input_text.tado_kitchen_entity') | default('climate.kitchen_tado') %}
+            {% set valid_entities = [] %}
+            {% for entity in [living_entity, kitchen_entity] %}
+              {% if states(entity) not in ['unknown', 'unavailable'] %}
+                {% set valid_entities = valid_entities + [entity] %}
+              {% endif %}
+            {% endfor %}
+            {{ valid_entities }}
+      - service: climate.set_temperature
+        data:
+          temperature: 19
+        target:
+          entity_id: >
+            {% set bedroom_entity = states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado') %}
+            {% set office_entity = states('input_text.tado_office_entity') | default('climate.office_tado') %}
+            {% set valid_entities = [] %}
+            {% for entity in [bedroom_entity, office_entity] %}
+              {% if states(entity) not in ['unknown', 'unavailable'] %}
+                {% set valid_entities = valid_entities + [entity] %}
+              {% endif %}
+            {% endfor %}
+            {{ valid_entities }}
+
+# Groups for easy management
+group:
+  tado_all_climate:
+    name: "All Tado Climate Devices"
+    entities: >
+      {% set entities = [
+        states('input_text.tado_living_room_entity') | default('climate.living_room_tado'),
+        states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado'),
+        states('input_text.tado_kitchen_entity') | default('climate.kitchen_tado'),
+        states('input_text.tado_office_entity') | default('climate.office_tado')
+      ] %}
+      {% set valid_entities = [] %}
+      {% for entity in entities %}
+        {% if states(entity) not in ['unknown', 'unavailable'] %}
+          {% set valid_entities = valid_entities + [entity] %}
+        {% endif %}
+      {% endfor %}
+      {{ valid_entities }}
+
+# Binary sensors for status
+binary_sensor:
+  - platform: template
+    sensors:
+      tado_any_heating:
+        friendly_name: "Any Tado Heating"
+        value_template: >
+          {% set entities = [
+            states('input_text.tado_living_room_entity') | default('climate.living_room_tado'),
+            states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado'),
+            states('input_text.tado_kitchen_entity') | default('climate.kitchen_tado'),
+            states('input_text.tado_office_entity') | default('climate.office_tado')
+          ] %}
+          {% set heating = false %}
+          {% for entity in entities %}
+            {% if states(entity) not in ['unknown', 'unavailable'] %}
+              {% if state_attr(entity, 'hvac_action') == 'heating' %}
+                {% set heating = true %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {{ heating }}
+        icon_template: >
+          {% if is_state('binary_sensor.tado_any_heating', 'on') %}
+            mdi:fire
+          {% else %}
+            mdi:fire-off
+          {% endif %}
+
+# Automations for intelligent heating management
+automation:
+  - alias: "Tado Home Mode Changed"
+    trigger:
+      - platform: state
+        entity_id: input_select.tado_home_mode
+    action:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_home_mode
+                state: "Home"
+            sequence:
+              - service: script.tado_set_comfort_mode
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_home_mode  
+                state: "Away"
+            sequence:
+              - service: script.tado_set_eco_mode
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_home_mode
+                state: "Sleep"
+            sequence:
+              - service: climate.set_temperature
+                data:
+                  temperature: 18
+                target:
+                  entity_id: >
+                    {% set bedroom_entity = states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado') %}
+                    {{ bedroom_entity if states(bedroom_entity) not in ['unknown', 'unavailable'] else [] }}
+              - service: script.tado_set_eco_mode
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_home_mode
+                state: "Vacation"
+            sequence:
+              - service: climate.set_temperature
+                data:
+                  temperature: 15
+                target:
+                  entity_id: >
+                    {% set entities = [
+                      states('input_text.tado_living_room_entity') | default('climate.living_room_tado'),
+                      states('input_text.tado_bedroom_entity') | default('climate.bedroom_tado'),
+                      states('input_text.tado_kitchen_entity') | default('climate.kitchen_tado'),
+                      states('input_text.tado_office_entity') | default('climate.office_tado')
+                    ] %}
+                    {% set valid_entities = [] %}
+                    {% for entity in entities %}
+                      {% if states(entity) not in ['unknown', 'unavailable'] %}
+                        {% set valid_entities = valid_entities + [entity] %}
+                      {% endif %}
+                    {% endfor %}
+                    {{ valid_entities }}
+
+  - alias: "Tado Preset Mode Changed"
+    trigger:
+      - platform: state
+        entity_id: input_select.tado_preset_mode
+    action:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_preset_mode
+                state: "Comfort"
+            sequence:
+              - service: script.tado_set_comfort_mode
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_preset_mode
+                state: "Eco"
+            sequence:
+              - service: script.tado_set_eco_mode
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_preset_mode
+                state: "Boost"
+            sequence:
+              - service: script.tado_set_boost_mode
+          - conditions:
+              - condition: state
+                entity_id: input_select.tado_preset_mode
+                state: "Party"
+            sequence:
+              - service: script.tado_party_mode

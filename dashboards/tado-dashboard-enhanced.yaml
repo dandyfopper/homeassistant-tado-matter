@@ -1,0 +1,484 @@
+# Enhanced Tado Dashboard with Dynamic Entity Support
+# This dashboard automatically adapts to your available Tado devices
+
+title: Tado Smart Home Enhanced
+theme: tado_theme
+icon: mdi:home-analytics
+background: "center / cover no-repeat linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+path: tado-enhanced
+
+views:
+  - title: Smart Home Overview
+    path: home
+    icon: mdi:home-analytics
+    panel: false
+    cards:
+      # Quick Status Bar
+      - type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            name: "Home Temp"
+            entity: sensor.tado_home_average_temperature
+            show_state: true
+            show_name: true
+            styles:
+              card:
+                - background: "linear-gradient(135deg, #2196F3, #64B5F6)"
+                - color: white
+                - border-radius: 15px
+                - height: 80px
+              name:
+                - font-size: 12px
+              state:
+                - font-size: 20px
+                - font-weight: bold
+
+          - type: custom:button-card
+            name: "Energy Savings"
+            entity: sensor.tado_energy_savings_today
+            show_state: true
+            show_name: true
+            styles:
+              card:
+                - background: "linear-gradient(135deg, #4CAF50, #81C784)"
+                - color: white
+                - border-radius: 15px
+                - height: 80px
+              name:
+                - font-size: 12px
+              state:
+                - font-size: 20px
+                - font-weight: bold
+
+          - type: custom:button-card
+            name: "Heating Status"
+            entity: binary_sensor.tado_any_heating
+            show_state: true
+            show_name: true
+            state_display: >
+              [[[
+                if (entity.state === 'on') return 'HEATING';
+                return 'IDLE';
+              ]]]
+            styles:
+              card:
+                - background: >
+                    [[[
+                      if (entity.state === 'on') return 'linear-gradient(135deg, #FF9800, #FFB74D)';
+                      return 'linear-gradient(135deg, #607D8B, #90A4AE)';
+                    ]]]
+                - color: white
+                - border-radius: 15px
+                - height: 80px
+              name:
+                - font-size: 12px
+              state:
+                - font-size: 16px
+                - font-weight: bold
+
+      # Main Control Section
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |
+              # 🏠 Tado Smart Home Control
+              
+              Control your home heating system with smart presets and individual room controls.
+
+          # Home Mode and Preset Controls
+          - type: horizontal-stack
+            cards:
+              - type: entities
+                title: "🏠 Home Modes"
+                entities:
+                  - input_select.tado_home_mode
+                  - input_select.tado_preset_mode
+
+              - type: entities
+                title: "🌡️ Temperature Settings"
+                entities:
+                  - input_number.tado_comfort_temperature
+                  - input_number.tado_eco_temperature
+                  - input_number.tado_boost_temperature
+
+      # Quick Action Buttons
+      - type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            name: "Comfort Mode"
+            icon: mdi:home
+            tap_action:
+              action: call-service
+              service: script.tado_set_comfort_mode
+            styles:
+              card:
+                - background: "linear-gradient(135deg, #4CAF50, #66BB6A)"
+                - color: white
+                - border-radius: 15px
+                - height: 80px
+
+          - type: custom:button-card
+            name: "Eco Mode"
+            icon: mdi:leaf
+            tap_action:
+              action: call-service
+              service: script.tado_set_eco_mode
+            styles:
+              card:
+                - background: "linear-gradient(135deg, #8BC34A, #AED581)"
+                - color: white
+                - border-radius: 15px
+                - height: 80px
+
+          - type: custom:button-card
+            name: "Boost Mode"
+            icon: mdi:fire
+            tap_action:
+              action: call-service
+              service: script.tado_set_boost_mode
+            styles:
+              card:
+                - background: "linear-gradient(135deg, #FF5722, #FF8A65)"
+                - color: white
+                - border-radius: 15px
+                - height: 80px
+
+          - type: custom:button-card
+            name: "Party Mode"
+            icon: mdi:party-popper
+            tap_action:
+              action: call-service
+              service: script.tado_party_mode
+            styles:
+              card:
+                - background: "linear-gradient(135deg, #E91E63, #F06292)"
+                - color: white
+                - border-radius: 15px
+                - height: 80px
+
+      # Room Status Grid
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+          # Living Room Card
+          - type: conditional
+            conditions:
+              - entity: sensor.tado_living_room_status
+                state_not: "unavailable"
+            card:
+              type: custom:button-card
+              name: "Living Room"
+              entity: sensor.tado_living_room_status
+              show_state: false
+              show_name: true
+              tap_action:
+                action: more-info
+                entity: >
+                  [[[ return states['input_text.tado_living_room_entity'].state; ]]]
+              styles:
+                card:
+                  - background: >
+                      [[[
+                        const state = entity.state;
+                        if (state === 'cold') return 'linear-gradient(135deg, #2196F3, #64B5F6)';
+                        if (state === 'warm') return 'linear-gradient(135deg, #FF5722, #FF8A65)';
+                        return 'linear-gradient(135deg, #4CAF50, #81C784)';
+                      ]]]
+                  - color: white
+                  - border-radius: 15px
+                  - height: 120px
+                name:
+                  - font-size: 16px
+                  - font-weight: bold
+              custom_fields:
+                temp: |
+                  [[[
+                    const temp = entity.attributes.temperature || 'Unknown';
+                    const target = entity.attributes.target_temperature || 'Unknown';
+                    return `<div style="font-size: 24px; font-weight: bold;">${temp}</div>`;
+                  ]]]
+                target: |
+                  [[[
+                    const target = entity.attributes.target_temperature || 'Unknown';
+                    return `<div style="font-size: 14px; opacity: 0.9;">Target: ${target}</div>`;
+                  ]]]
+                status: |
+                  [[[
+                    const action = entity.attributes.hvac_action || 'idle';
+                    const icon = action === 'heating' ? '🔥' : '❄️';
+                    return `<div style="font-size: 12px;">${icon} ${action.toUpperCase()}</div>`;
+                  ]]]
+
+          # Bedroom Card
+          - type: conditional
+            conditions:
+              - entity: sensor.tado_bedroom_status
+                state_not: "unavailable"
+            card:
+              type: custom:button-card
+              name: "Bedroom"
+              entity: sensor.tado_bedroom_status
+              show_state: false
+              show_name: true
+              tap_action:
+                action: more-info
+                entity: >
+                  [[[ return states['input_text.tado_bedroom_entity'].state; ]]]
+              styles:
+                card:
+                  - background: >
+                      [[[
+                        const state = entity.state;
+                        if (state === 'cold') return 'linear-gradient(135deg, #2196F3, #64B5F6)';
+                        if (state === 'warm') return 'linear-gradient(135deg, #FF5722, #FF8A65)';
+                        return 'linear-gradient(135deg, #4CAF50, #81C784)';
+                      ]]]
+                  - color: white
+                  - border-radius: 15px
+                  - height: 120px
+                name:
+                  - font-size: 16px
+                  - font-weight: bold
+              custom_fields:
+                temp: |
+                  [[[
+                    const temp = entity.attributes.temperature || 'Unknown';
+                    return `<div style="font-size: 24px; font-weight: bold;">${temp}</div>`;
+                  ]]]
+                target: |
+                  [[[
+                    const target = entity.attributes.target_temperature || 'Unknown';
+                    return `<div style="font-size: 14px; opacity: 0.9;">Target: ${target}</div>`;
+                  ]]]
+                status: |
+                  [[[
+                    const action = entity.attributes.hvac_action || 'idle';
+                    const icon = action === 'heating' ? '🔥' : '❄️';
+                    return `<div style="font-size: 12px;">${icon} ${action.toUpperCase()}</div>`;
+                  ]]]
+
+          # Kitchen Card
+          - type: conditional
+            conditions:
+              - entity: sensor.tado_kitchen_status
+                state_not: "unavailable"
+            card:
+              type: custom:button-card
+              name: "Kitchen"
+              entity: sensor.tado_kitchen_status
+              show_state: false
+              show_name: true
+              tap_action:
+                action: more-info
+                entity: >
+                  [[[ return states['input_text.tado_kitchen_entity'].state; ]]]
+              styles:
+                card:
+                  - background: >
+                      [[[
+                        const state = entity.state;
+                        if (state === 'cold') return 'linear-gradient(135deg, #2196F3, #64B5F6)';
+                        if (state === 'warm') return 'linear-gradient(135deg, #FF5722, #FF8A65)';
+                        return 'linear-gradient(135deg, #4CAF50, #81C784)';
+                      ]]]
+                  - color: white
+                  - border-radius: 15px
+                  - height: 120px
+                name:
+                  - font-size: 16px
+                  - font-weight: bold
+              custom_fields:
+                temp: |
+                  [[[
+                    const temp = entity.attributes.temperature || 'Unknown';
+                    return `<div style="font-size: 24px; font-weight: bold;">${temp}</div>`;
+                  ]]]
+                target: |
+                  [[[
+                    const target = entity.attributes.target_temperature || 'Unknown';
+                    return `<div style="font-size: 14px; opacity: 0.9;">Target: ${target}</div>`;
+                  ]]]
+
+          # Office Card
+          - type: conditional
+            conditions:
+              - entity: sensor.tado_office_status
+                state_not: "unavailable"
+            card:
+              type: custom:button-card
+              name: "Office"
+              entity: sensor.tado_office_status
+              show_state: false
+              show_name: true
+              tap_action:
+                action: more-info
+                entity: >
+                  [[[ return states['input_text.tado_office_entity'].state; ]]]
+              styles:
+                card:
+                  - background: >
+                      [[[
+                        const state = entity.state;
+                        if (state === 'cold') return 'linear-gradient(135deg, #2196F3, #64B5F6)';
+                        if (state === 'warm') return 'linear-gradient(135deg, #FF5722, #FF8A65)';
+                        return 'linear-gradient(135deg, #4CAF50, #81C784)';
+                      ]]]
+                  - color: white
+                  - border-radius: 15px
+                  - height: 120px
+                name:
+                  - font-size: 16px
+                  - font-weight: bold
+              custom_fields:
+                temp: |
+                  [[[
+                    const temp = entity.attributes.temperature || 'Unknown';
+                    return `<div style="font-size: 24px; font-weight: bold;">${temp}</div>`;
+                  ]]]
+                target: |
+                  [[[
+                    const target = entity.attributes.target_temperature || 'Unknown';
+                    return `<div style="font-size: 14px; opacity: 0.9;">Target: ${target}</div>`;
+                  ]]]
+
+      # Individual Room Controls
+      - type: conditional
+        conditions:
+          - entity: sensor.available_tado_climate_entities
+            state_not: "0"
+        card:
+          type: vertical-stack
+          cards:
+            - type: markdown
+              content: |
+                ## 🎛️ Individual Room Controls
+                
+                Fine-tune each room's temperature independently:
+
+            - type: auto-entities
+              card:
+                type: entities
+                title: "Room Thermostats"
+              filter:
+                include:
+                  - entity_id: "climate.*tado*"
+                exclude: []
+              sort:
+                method: friendly_name
+
+  - title: Device Configuration
+    path: config
+    icon: mdi:cog
+    cards:
+      - type: markdown
+        content: |
+          # ⚙️ Device Configuration
+          
+          Configure which Tado entities to use for each room. The system will automatically adapt the dashboard based on your selections.
+
+      - type: entities
+        title: "🔍 Discovery Status"
+        entities:
+          - sensor.available_tado_climate_entities
+          - sensor.available_tado_sensor_entities
+          - input_select.tado_device_setup_mode
+
+      - type: entities
+        title: "🏠 Room Entity Mapping"
+        entities:
+          - input_text.tado_living_room_entity
+          - input_text.tado_bedroom_entity
+          - input_text.tado_kitchen_entity
+          - input_text.tado_office_entity
+
+      - type: horizontal-stack
+        cards:
+          - type: button
+            tap_action:
+              action: call-service
+              service: script.tado_auto_discover_entities
+            name: "🔍 Auto-Discover Devices"
+
+          - type: button
+            tap_action:
+              action: call-service
+              service: script.tado_apply_discovered_entities
+            name: "✅ Apply Auto-Config"
+
+      - type: markdown
+        content: |
+          ## 📝 Manual Configuration
+          
+          If auto-discovery doesn't work perfectly, you can manually enter your Tado entity names above. 
+          
+          **Common Tado Entity Patterns:**
+          - `climate.tado_smart_radiator_thermostat_*`
+          - `climate.tado_wireless_smart_thermostat_*`
+          - Look for entities containing "*tado*" in the entity list below.
+
+      - type: auto-entities
+        card:
+          type: entities
+          title: "All Available Climate Entities"
+        filter:
+          include:
+            - domain: climate
+          exclude: []
+        sort:
+          method: entity_id
+
+  - title: Temperature History
+    path: history
+    icon: mdi:chart-line
+    cards:
+      - type: markdown
+        content: |
+          # 📊 Temperature History & Analytics
+          
+          Track your home's temperature patterns and heating efficiency over time.
+
+      - type: history-graph
+        title: "Room Temperatures (24h)"
+        hours_to_show: 24
+        refresh_interval: 300
+        entities: >
+          {% set entities = [] %}
+          {% for room in ['living_room', 'bedroom', 'kitchen', 'office'] %}
+            {% set entity = states('input_text.tado_' + room + '_entity') %}
+            {% if entity and states(entity) not in ['unknown', 'unavailable'] %}
+              {% set entities = entities + [entity] %}
+            {% endif %}
+          {% endfor %}
+          {{ entities }}
+
+      - type: statistics-graph
+        title: "Average Daily Temperature"
+        chart_type: line
+        period: day
+        stat_types:
+          - mean
+        entities:
+          - sensor.tado_home_average_temperature
+
+      - type: horizontal-stack
+        cards:
+          - type: gauge
+            entity: sensor.tado_energy_savings_today
+            name: "Today's Efficiency"
+            min: 0
+            max: 100
+            severity:
+              green: 70
+              yellow: 40
+              red: 0
+
+          - type: gauge
+            entity: sensor.tado_home_average_temperature
+            name: "Home Average"
+            min: 15
+            max: 25
+            severity:
+              green: 20
+              yellow: 18
+              red: 16
