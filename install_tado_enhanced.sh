@@ -470,7 +470,7 @@ views:
           title: "Sensor Entities (Temperature, Humidity, etc.)"
         filter:
           include:
-            - entity_id: "sensor.*(sensor_|radiator_)*"
+            - entity_id: "*(sensor_|radiator_)*"
           exclude: []
         sort:
           method: entity_id
@@ -481,7 +481,7 @@ views:
           title: "Binary Sensor Entities"
         filter:
           include:
-            - entity_id: "binary_sensor.*(sensor_|radiator_)*"
+            - entity_id: "*(sensor_|radiator_)*"
           exclude: []
         sort:
           method: entity_id
