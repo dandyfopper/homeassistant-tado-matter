@@ -17,91 +17,61 @@ views:
             content: |
               # 🏠 Tado Device Configuration
               
-              Use this dashboard to easily set up your Tado devices. The system will automatically detect your Tado entities and configure the dashboard.
+              Use this dashboard to configure your Tado devices. The system uses the current setup with your available entities.
               
-              ## Setup Progress
+              ## Current Configuration
               
           - type: entities
-            title: "Setup Progress"
+            title: "Current Setup"
             entities:
-              - input_select.tado_installation_step
-              - input_select.tado_device_setup_mode
+              - input_select.tado_home_mode
+              - input_select.tado_preset_mode
 
-      # Device Discovery Section
-      - type: conditional
-        conditions:
-          - entity: input_select.tado_installation_step
-            state_not: "5. Complete"
-        card:
-          type: vertical-stack
-          cards:
-            - type: markdown
-              content: |
-                ## 🔍 Device Discovery
-                
-                Click the button below to automatically discover your Tado devices:
-                
-            - type: button
-              tap_action:
-                action: call-service
-                service: script.tado_auto_discover_entities
-              name: "🔍 Discover Tado Devices"
+      # Entity Configuration Section
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |
+              ## 🔧 Entity Configuration
               
-            - type: entities
-              title: "Discovered Devices"
-              entities:
-                - sensor.available_tado_climate_entities
-                - sensor.available_tado_sensor_entities
+              Your current Tado entity settings:
+              
+          - type: entities
+            title: "Climate Entity Names"
+            entities:
+              - input_text.tado_living_room_entity
+              - input_text.tado_bedroom_entity
+              - input_text.tado_kitchen_entity
+              - input_text.tado_office_entity
 
-      # Manual Configuration Section  
-      - type: conditional
-        conditions:
-          - entity: input_select.tado_device_setup_mode
-            state: "Manual Configuration"
-        card:
-          type: vertical-stack
-          cards:
-            - type: markdown
-              content: |
-                ## 🔧 Manual Entity Configuration
+      # Quick Actions
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |
+              ## 🎛️ Quick Actions
+              
+              Use these buttons to quickly control your Tado system:
+              
+          - type: horizontal-stack
+            cards:
+              - type: button
+                tap_action:
+                  action: call-service
+                  service: script.tado_set_comfort_mode
+                name: "🏠 Comfort Mode"
                 
-                If automatic discovery doesn't work, you can manually enter your Tado entity names:
+              - type: button
+                tap_action:
+                  action: call-service
+                  service: script.tado_set_eco_mode
+                name: "🌱 Eco Mode"
                 
-            - type: entities
-              title: "Climate Entity Names"
-              entities:
-                - input_text.tado_living_room_entity
-                - input_text.tado_bedroom_entity
-                - input_text.tado_kitchen_entity
-                - input_text.tado_office_entity
-                
-            - type: button
-              tap_action:
-                action: call-service
-                service: script.tado_apply_discovered_entities
-              name: "Apply Configuration"
-
-      # Setup completion
-      - type: conditional
-        conditions:
-          - entity: input_select.tado_installation_step
-            state: "5. Complete"
-        card:
-          type: markdown
-          content: |
-            # ✅ Setup Complete!
-            
-            Your Tado configuration is now ready. You can:
-            
-            - Visit the **Tado Smart Home** dashboard to see your devices
-            - Customize room layouts in the configuration
-            - Set up automations for different heating modes
-            
-            **Next Steps:**
-            1. Go to the main Tado dashboard 
-            2. Configure your room layout
-            3. Test the heating controls
-            4. Set up automations if desired
+              - type: button
+                tap_action:
+                  action: call-service
+                  service: script.tado_set_boost_mode
+                name: "🔥 Boost Mode"
 
   - title: Entity Reference
     path: entities
@@ -154,18 +124,18 @@ views:
         content: |
           # 📊 System Status
           
-          Monitor your Tado system configuration and health.
+          Monitor your Tado system configuration and current state.
           
       - type: entities
-        title: "Configuration Status"
+        title: "Current System State"
         entities:
-          - sensor.available_tado_climate_entities
-          - sensor.available_tado_sensor_entities
-          - input_select.tado_device_setup_mode
-          - input_select.tado_installation_step
+          - input_select.tado_home_mode
+          - input_select.tado_preset_mode
+          - input_number.tado_comfort_temperature
+          - input_number.tado_eco_temperature
           
       - type: entities
-        title: "Current Entity Mapping"
+        title: "Entity Configuration"
         entities:
           - input_text.tado_living_room_entity
           - input_text.tado_bedroom_entity
@@ -213,13 +183,25 @@ views:
           - input_boolean.tado_window_detection_enabled
           - input_boolean.tado_adaptive_scheduling
           
-      - type: button
-        tap_action:
-          action: call-service
-          service: script.tado_reset_configuration
-        name: "🔄 Reset Configuration"
-        confirmation:
-          text: "Are you sure you want to reset all Tado configuration? This will clear all entity mappings and settings."
+      - type: horizontal-stack
+        cards:
+          - type: button
+            tap_action:
+              action: call-service
+              service: script.tado_set_comfort_mode
+            name: "🏠 Comfort"
+            
+          - type: button
+            tap_action:
+              action: call-service
+              service: script.tado_set_eco_mode
+            name: "🌱 Eco"
+            
+          - type: button
+            tap_action:
+              action: call-service
+              service: script.tado_set_boost_mode
+            name: "🔥 Boost"
           
       - type: markdown
         content: |

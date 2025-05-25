@@ -220,6 +220,45 @@ input_number:
     icon: mdi:fire
     initial: 25
 
+# Input text for manual entity configuration
+input_text:
+  tado_living_room_entity:
+    name: "Living Room Tado Entity"
+    initial: "climate.living_room_tado"
+    icon: mdi:sofa
+    
+  tado_bedroom_entity:
+    name: "Bedroom Tado Entity"
+    initial: "climate.bedroom_tado"
+    icon: mdi:bed
+    
+  tado_kitchen_entity:
+    name: "Kitchen Tado Entity"
+    initial: "climate.kitchen_tado"
+    icon: mdi:chef-hat
+    
+  tado_office_entity:
+    name: "Office Tado Entity"
+    initial: "climate.office_tado"
+    icon: mdi:desk
+
+# Input booleans for advanced features
+input_boolean:
+  tado_geofencing_enabled:
+    name: "Geofencing Enabled"
+    initial: true
+    icon: mdi:map-marker-radius
+
+  tado_window_detection_enabled:
+    name: "Window Detection Enabled"
+    initial: true
+    icon: mdi:window-open
+
+  tado_adaptive_scheduling:
+    name: "Adaptive Scheduling"
+    initial: false
+    icon: mdi:calendar-clock
+
 # Smart scripts that work with any Tado entities
 script:
   tado_set_comfort_mode:

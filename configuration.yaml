@@ -13,7 +13,10 @@ frontend:
 
 # Dashboard configuration for Tado
 lovelace:
-  mode: storage
+  mode: yaml
+  resources:
+    - url: /hacsfiles/button-card/button-card.js
+      type: module
   dashboards:
     tado-infographic:
       mode: yaml
